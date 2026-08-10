@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECCP Program Dashboard | WaTech</title>
+<style>
+/* ================================ DESIGN TOKENS ================================ */
+:root {
+  --primary: #253D8D;
+  --primary-hover: #1e3278;
+  --secondary: #2D9BF0;
+  --accent-blue: #6790CB;
+  --accent-lime: #C3D14E;
+  --error: #EF3F38;
+  --teal: #576467;
+  --gray-900: #1a1f2e;
+  --gray-700: #3d4560;
+  --gray-500: #808080;
+  --gray-300: #B5B5B5;
+  --gray-100: #E6E6E6;
+  --gray-50: #F4F6FA;
+  --surface: #FFFFFF;
+  --bg: #DDE3F0;
+  --status-both: #253D8D;
+  --status-partial: #2D9BF0;
+  --status-vision: #EF3F38;
+  --status-release: #7a8a1e;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 3px rgba(37,61,141,0.08);
+  --shadow-md: 0 4px 16px rgba(37,61,141,0.12);
+  --shadow-lg: 0 8px 28px rgba(37,61,141,0.16);
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: linear-gradient(145deg, #d8dff0 0%, #e8ecf5 100%); min-height: 100vh; color: var(--gray-900); font-size: 14px; line-height: 1.5; }
+
+/* ================================ NAV ================================ */
+.nav { background: var(--primary); height: 58px; display: flex; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 12px rgba(0,0,0,0.25); gap: 32px; }
+.nav-data-btns { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.nav-data-btn { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); color: white; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background .15s; }
+.nav-data-btn:hover { background: rgba(255,255,255,0.22); }
+.nav-data-btn svg { flex-shrink: 0; }
+#import-toast { position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 9999; opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; pointer-events: none; }
+#import-toast.show { opacity: 1; transform: translateY(0); }
+.nav-brand { display: flex; align-items: center; gap: 10px; color: white; text-decoration: none; flex-shrink: 0; }
+.nav-brand-logo { width: 32px; height: 32px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.nav-brand-logo svg { width: 18px; height: 18px; }
+.nav-brand-text { font-size: 15px; font-weight: 700; line-height: 1; }
+.nav-brand-sub { font-size: 10px; color: rgba(255,255,255,0.6); font-weight: 400; margin-top: 2px; }
+.nav-tabs { display: flex; gap: 2px; flex: 1; }
+.nav-tab { background: none; border: none; color: rgba(255,255,255,0.7); padding: 7px 16px; border-radius: var(--radius-sm); cursor: pointer; font: 13px var(--font); transition: all .15s; white-space: nowrap; }
+.nav-tab:hover { background: rgba(255,255,255,0.1); color: white; }
+.nav-tab.active { background: rgba(255,255,255,0.15); color: white; font-weight: 600; }
+.nav-chip { background: var(--secondary); color: white; border-radius: 10px; padding: 1px 7px; font-size: 10px; margin-left: 5px; font-weight: 700; }
+
+/* ================================ VIEWS ================================ */
+.view { display: none; padding: 28px 24px 48px; min-height: calc(100vh - 58px); max-width: 1600px; margin: 0 auto; }
+.view.active { display: block; }
+.view-header { margin-bottom: 22px; }
+.view-header h1 { font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+.view-header p { color: var(--gray-500); font-size: 13px; }
+
+/* ================================ FILTER BAR ================================ */
+.filter-bar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; background: var(--surface); padding: 10px 14px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); margin-bottom: 18px; }
+.filter-label { font-size: 11px; font-weight: 700; color: var(--gray-300); text-transform: uppercase; letter-spacing: 0.6px; margin-right: 2px; flex-shrink: 0; }
+.filter-sep { width: 1px; height: 22px; background: var(--gray-100); margin: 0 4px; flex-shrink: 0; }
+.chip { background: var(--gray-50); border: 1.5px solid var(--gray-100); color: var(--gray-700); padding: 5px 12px; border-radius: 20px; cursor: pointer; font: 12px var(--font); transition: all .15s; white-space: nowrap; }
+.chip:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+.chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+.chip.active-secondary { background: var(--secondary); color: white; border-color: var(--secondary); }
+.ml-auto { margin-left: auto; }
+.reset-chip { background: none; border: 1px solid var(--gray-100); color: var(--gray-300); padding: 5px 12px; border-radius: 20px; cursor: pointer; font: 11px var(--font); transition: all .15s; }
+.reset-chip:hover { border-color: var(--error); color: var(--error); }
+
+/* ================================ VIEW 1: JOURNEY MAP ================================ */
+.journey-outer { overflow-x: auto; padding-bottom: 12px; }
+.legend { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; background: var(--surface); padding: 10px 16px; border-radius: var(--radius-sm); margin-bottom: 14px; box-shadow: var(--shadow-sm); font-size: 12px; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+.jm-grid { display: grid; grid-template-columns: repeat(6, minmax(160px, 1fr)); gap: 4px; min-width: 1020px; }
+.phase-hdr { padding: 12px 14px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; color: white; }
+.phase-hdr.navy { background: var(--primary); }
+.phase-hdr.blue { background: var(--secondary); }
+.phase-num { font-size: 10px; font-weight: 700; opacity: .65; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+.phase-name { font-size: 13px; font-weight: 800; line-height: 1.3; margin-bottom: 5px; }
+.phase-desc-text { font-size: 11px; opacity: .82; line-height: 1.5; }
+.partial-tag { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 8px; margin-top: 5px; }
+
+.phase-col { background: rgba(255,255,255,0.35); border-radius: 0 0 var(--radius-sm) var(--radius-sm); padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.col-label { font-size: 10px; font-weight: 700; color: var(--gray-300); text-transform: uppercase; letter-spacing: .5px; padding: 0 2px 4px; }
+
+.step-card { background: var(--surface); border-radius: 6px; padding: 10px 12px; border-left: 3px solid var(--primary); box-shadow: var(--shadow-sm); position: relative; cursor: default; transition: box-shadow .15s, transform .15s; }
+.step-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.step-card.st-both   { border-left-color: var(--status-both); }
+.step-card.st-partial { border-left-color: var(--status-partial); background: #f0f7ff; }
+.step-card.st-vision  { border-left-color: var(--status-vision); background: #fff5f5; }
+.step-card.st-release { border-left-color: #a3b429; background: #fafce8; }
+.step-name { font-size: 12px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+.step-desc { font-size: 11px; color: var(--gray-500); line-height: 1.4; margin-bottom: 5px; }
+.step-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
+.step-actor { font-size: 10px; color: var(--accent-blue); font-weight: 600; }
+.step-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; }
+.sb-both    { background: rgba(37,61,141,.1);  color: var(--primary); }
+.sb-partial { background: rgba(45,155,240,.1); color: var(--secondary); }
+.sb-vision  { background: rgba(239,63,56,.1);  color: var(--error); }
+.sb-release { background: rgba(122,138,30,.12); color: #636e17; }
+.step-substeps { display: none; margin-top: 6px; border-top: 1px dashed var(--gray-100); padding-top: 6px; }
+.step-substeps.open { display: block; }
+.substep-item { font-size: 11px; color: var(--gray-700); padding: 2px 0; display: flex; align-items: flex-start; gap: 6px; }
+.substep-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-lime); flex-shrink: 0; margin-top: 5px; }
+
+/* Vision-only grid */
+.vision-grid { display: grid; grid-template-columns: repeat(6, minmax(160px, 1fr)); gap: 12px; min-width: 1020px; }
+.vision-card { background: var(--primary); color: white; border-radius: var(--radius-md); padding: 18px; min-height: 160px; }
+.vision-card.blue { background: var(--secondary); }
+
+/* Release-only grid */
+.release-grid { min-width: 1020px; }
+.release-phase-row { display: grid; grid-template-columns: repeat(6, minmax(160px, 1fr)); gap: 4px; margin-bottom: 4px; }
+.release-phase-hdr { background: var(--gray-900); color: white; border-radius: var(--radius-sm) var(--radius-sm) 0 0; padding: 8px 12px; font-size: 11px; font-weight: 700; }
+.release-steps-row { display: grid; grid-template-columns: repeat(6, minmax(160px, 1fr)); gap: 4px; }
+.release-col { background: rgba(255,255,255,0.35); border-radius: 0 0 var(--radius-sm) var(--radius-sm); padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+
+/* ================================ VIEW 2: SERVICES ================================ */
+.search-wrap { position: relative; flex: 1; max-width: 300px; }
+.search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.svc-search { width: 100%; background: var(--surface); border: 1.5px solid var(--gray-100); border-radius: var(--radius-md); padding: 8px 12px 8px 34px; font: 13px var(--font); color: var(--gray-900); outline: none; transition: border-color .15s; }
+.svc-search:focus { border-color: var(--secondary); }
+.svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+
+.svc-node { background: var(--surface); border-radius: var(--radius-md); box-shadow: var(--shadow-md); overflow: hidden; transition: box-shadow .2s; }
+.svc-node:hover { box-shadow: var(--shadow-lg); }
+.svc-hdr { padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; user-select: none; }
+.svc-hdr.t-support { background: var(--primary); }
+.svc-hdr.t-package { background: var(--teal); }
+.svc-hdr.t-value   { background: var(--secondary); }
+.svc-icon { width: 38px; height: 38px; background: rgba(255,255,255,0.15); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.svc-type-tag { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: rgba(255,255,255,.65); margin-bottom: 2px; }
+.svc-title { font-size: 14px; font-weight: 800; color: white; }
+.svc-chevron { color: rgba(255,255,255,.6); font-size: 13px; transition: transform .2s; margin-left: auto; flex-shrink: 0; }
+.svc-chevron.open { transform: rotate(180deg); }
+.svc-body { display: none; }
+.svc-body.open { display: block; }
+.svc-summary { padding: 11px 16px; font-size: 12px; color: var(--gray-500); background: var(--gray-50); border-bottom: 1px solid var(--gray-100); line-height: 1.5; }
+
+.cap-node { border-left: 3px solid var(--accent-blue); margin: 8px 12px; border-radius: var(--radius-sm); overflow: hidden; background: var(--gray-50); }
+.cap-hdr { padding: 8px 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background .15s; }
+.cap-hdr:hover { background: rgba(103,144,203,.07); }
+.cap-dot { width: 22px; height: 22px; background: var(--accent-blue); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; flex-shrink: 0; }
+.cap-name { font-size: 12px; font-weight: 700; flex: 1; color: var(--gray-900); }
+.cap-status-badge { font-size: 10px; padding: 2px 7px; border-radius: 8px; font-weight: 700; flex-shrink: 0; }
+.cs-active   { background: rgba(37,61,141,.1); color: var(--primary); }
+.cs-proposed { background: rgba(128,128,128,.1); color: var(--gray-500); }
+.cap-chev { font-size: 11px; color: var(--gray-300); transition: transform .2s; flex-shrink: 0; }
+.cap-chev.open { transform: rotate(180deg); }
+
+.func-list { display: none; padding: 4px 10px 8px 42px; }
+.func-list.open { display: block; }
+.func-item { display: flex; align-items: flex-start; gap: 7px; padding: 4px 0; font-size: 11px; color: var(--gray-700); border-bottom: 1px dashed var(--gray-100); }
+.func-item:last-child { border: none; }
+.func-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-lime); flex-shrink: 0; margin-top: 5px; }
+
+/* ================================ VIEW 3: ROLES ================================ */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.stat-card { background: var(--surface); border-radius: var(--radius-md); padding: 16px 20px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 14px; }
+.stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.stat-icon.total    { background: rgba(37,61,141,.1); }
+.stat-icon.hire     { background: rgba(239,63,56,.1); }
+.stat-icon.internal { background: rgba(45,155,240,.1); }
+.stat-icon.optional { background: rgba(195,209,78,.15); }
+.stat-num { font-size: 30px; font-weight: 900; line-height: 1; }
+.stat-num.total    { color: var(--primary); }
+.stat-num.hire     { color: var(--error); }
+.stat-num.internal { color: var(--secondary); }
+.stat-num.optional { color: #7a8a1e; }
+.stat-lbl { font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+.roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.role-card { background: var(--surface); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); overflow: hidden; transition: box-shadow .2s, transform .15s; display: flex; flex-direction: column; }
+.role-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.role-hdr { padding: 15px 16px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: flex-start; gap: 12px; }
+.role-avatar { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.role-avatar.hire     { background: rgba(239,63,56,.08); }
+.role-avatar.internal { background: rgba(45,155,240,.08); }
+.role-avatar.optional { background: rgba(195,209,78,.12); }
+.role-title-text { font-size: 13px; font-weight: 800; color: var(--gray-900); line-height: 1.3; margin-bottom: 3px; }
+.role-dept { font-size: 11px; color: var(--gray-500); }
+.role-body { padding: 13px 16px; flex: 1; }
+.role-sec { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-300); margin-bottom: 4px; margin-top: 10px; }
+.role-sec:first-child { margin-top: 0; }
+.role-text { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.skill-tag { background: var(--gray-50); border: 1px solid var(--gray-100); color: var(--gray-700); border-radius: 4px; padding: 2px 7px; font-size: 11px; }
+.role-ftr { padding: 10px 16px; background: var(--gray-50); border-top: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.priority-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+.pb-critical { background: rgba(239,63,56,.1); color: var(--error); }
+.pb-required { background: rgba(45,155,240,.1); color: var(--secondary); }
+.pb-optional { background: rgba(122,138,30,.1); color: #636e17; }
+.hire-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; }
+.hb-hire     { background: rgba(239,63,56,.08); color: var(--error); }
+.hb-internal { background: rgba(45,155,240,.08); color: var(--secondary); }
+.hb-optional { background: rgba(122,138,30,.08); color: #636e17; }
+
+/* empty state */
+.empty-state { grid-column: 1/-1; text-align: center; padding: 48px 24px; color: var(--gray-300); font-size: 14px; }
+
+/* ── Font size accessibility ── */
+.font-size-btns { display: flex; align-items: center; gap: 3px; margin-right: 4px; }
+.font-size-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.75); border-radius: 5px; cursor: pointer; line-height: 1; font-weight: 700; padding: 4px 8px; transition: background .15s, color .15s; }
+.font-size-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+.font-size-btn.active { background: rgba(255,255,255,0.25); color: white; border-color: rgba(255,255,255,0.45); }
+.font-size-btn.fsz-sm { font-size: 11px; }
+.font-size-btn.fsz-md { font-size: 14px; }
+.font-size-btn.fsz-lg { font-size: 17px; }
+
+/* Large font overrides */
+body[data-font="large"] .view-header h1 { font-size: 26px; }
+body[data-font="large"] .view-header p  { font-size: 15px; }
+body[data-font="large"] .svc-title      { font-size: 17px; }
+body[data-font="large"] .svc-summary    { font-size: 14px; }
+body[data-font="large"] .cap-name       { font-size: 14px; }
+body[data-font="large"] .func-item      { font-size: 13px; }
+body[data-font="large"] .role-title-text{ font-size: 15px; }
+body[data-font="large"] .role-text      { font-size: 14px; }
+body[data-font="large"] .skill-tag      { font-size: 13px; }
+body[data-font="large"] .filter-label   { font-size: 13px; }
+body[data-font="large"] .chip           { font-size: 13px; }
+body[data-font="large"] .step-card      { font-size: 13px; }
+body[data-font="large"] .legend-item    { font-size: 13px; }
+
+/* X-Large font overrides */
+body[data-font="xlarge"] .view-header h1 { font-size: 30px; }
+body[data-font="xlarge"] .view-header p  { font-size: 17px; }
+body[data-font="xlarge"] .svc-title      { font-size: 20px; }
+body[data-font="xlarge"] .svc-summary    { font-size: 16px; }
+body[data-font="xlarge"] .cap-name       { font-size: 16px; }
+body[data-font="xlarge"] .func-item      { font-size: 15px; }
+body[data-font="xlarge"] .role-title-text{ font-size: 18px; }
+body[data-font="xlarge"] .role-text      { font-size: 16px; }
+body[data-font="xlarge"] .skill-tag      { font-size: 14px; }
+body[data-font="xlarge"] .filter-label   { font-size: 14px; }
+body[data-font="xlarge"] .chip           { font-size: 14px; padding: 5px 14px; }
+body[data-font="xlarge"] .step-card      { font-size: 14px; }
+body[data-font="xlarge"] .legend-item    { font-size: 14px; }
+
+/* Journey map font overrides (need !important to beat inline styles) */
+body[data-font="large"]  .jm-ph-num     { font-size: 12px !important; }
+body[data-font="large"]  .jm-ph-name    { font-size: 15px !important; }
+body[data-font="large"]  .jm-ph-desc    { font-size: 13px !important; }
+body[data-font="large"]  .jm-ph-implied { font-size: 12px !important; }
+body[data-font="large"]  .jm-sub-name   { font-size: 14px !important; }
+body[data-font="large"]  .jm-sub-actor  { font-size: 12px !important; }
+body[data-font="large"]  .jm-sub-desc   { font-size: 13px !important; }
+body[data-font="large"]  .jm-status-lbl { font-size: 12px !important; }
+body[data-font="large"]  .jm-step-num   { font-size: 11px !important; }
+body[data-font="large"]  .jm-step-sub   { font-size: 13px !important; }
+body[data-font="large"]  .jm-note-line  { font-size: 13px !important; }
+body[data-font="xlarge"] .jm-ph-num     { font-size: 14px !important; }
+body[data-font="xlarge"] .jm-ph-name    { font-size: 17px !important; }
+body[data-font="xlarge"] .jm-ph-desc    { font-size: 15px !important; }
+body[data-font="xlarge"] .jm-ph-implied { font-size: 14px !important; }
+body[data-font="xlarge"] .jm-sub-name   { font-size: 16px !important; }
+body[data-font="xlarge"] .jm-sub-actor  { font-size: 14px !important; }
+body[data-font="xlarge"] .jm-sub-desc   { font-size: 15px !important; }
+body[data-font="xlarge"] .jm-status-lbl { font-size: 14px !important; }
+body[data-font="xlarge"] .jm-step-num   { font-size: 13px !important; }
+body[data-font="xlarge"] .jm-step-sub   { font-size: 15px !important; }
+body[data-font="xlarge"] .jm-note-line  { font-size: 15px !important; }
+
+@media (max-width: 900px) {
+  .stats-row { grid-template-columns: repeat(2,1fr); }
+  .svc-grid, .roles-grid { grid-template-columns: 1fr; }
+  .view { padding: 16px 14px 32px; }
+}
+@media print {
+  .nav { position: static; }
+  .filter-bar { display: none; }
+  .svc-body, .func-list { display: block !important; }
+  .step-substeps { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-brand" href="#">
+    <div>
+      <div class="nav-brand-text">WaTech</div>
+      <div class="nav-brand-sub">ECCP Program Dashboard</div>
+    </div>
+  </a>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('journey',this)">Journey Map</button>
+    <button class="nav-tab" onclick="showView('services',this)">Services &amp; Capabilities</button>
+    <button class="nav-tab" onclick="showView('roles',this)">Roles &amp; Staffing</button>
+  </div>
+  <div class="font-size-btns" title="Text size">
+    <button class="font-size-btn fsz-sm active" data-fsz="normal"  onclick="setFontSize('normal',this)">A</button>
+    <button class="font-size-btn fsz-md"        data-fsz="large"   onclick="setFontSize('large',this)">A</button>
+    <button class="font-size-btn fsz-lg"        data-fsz="xlarge"  onclick="setFontSize('xlarge',this)">A</button>
+  </div>
+  <div class="nav-data-btns">
+    <button class="nav-data-btn" onclick="exportData()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export
+    </button>
+    <button class="nav-data-btn" onclick="document.getElementById('import-file').click()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Import
+    </button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+  </div>
+</nav>
+<div id="import-toast"></div>
+
+<!-- VIEW 1: JOURNEY MAP -->
+<section id="view-journey" class="view active">
+  <div class="view-header">
+    <h1>Journey Map Comparison</h1>
+    <p>Future State Vision blueprint vs. Release 1 planned build — hover steps to see substeps</p>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Mode</span>
+    <button class="chip active" id="jbtn-comparison" onclick="setMode('comparison',this)">Comparison</button>
+    <button class="chip" id="jbtn-vision" onclick="setMode('vision',this)">Future Vision Only</button>
+    <button class="chip" id="jbtn-release" onclick="setMode('release',this)">Release 1 Only</button>
+    <div class="filter-sep"></div>
+    <button class="chip" id="jbtn-desc" onclick="toggleDesc(this)">Show Phase Detail</button>
+    <button class="chip" id="jbtn-sub" onclick="toggleSubs(this)">Show Step Detail</button>
+    <button class="reset-chip ml-auto" onclick="resetJourney()">Reset</button>
+  </div>
+
+  <div id="jm-legend" class="legend">
+    <strong style="font-size:11px;color:var(--gray-700);margin-right:4px;">Legend:</strong>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--status-both)"></div>Aligned (in both)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--status-partial)"></div>Partially covered</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--status-vision)"></div>Future vision only</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#a3b429"></div>Release 1 only</div>
+  </div>
+
+  <div class="journey-outer">
+    <div id="jm-root"></div>
+  </div>
+</section>
+
+<!-- VIEW 2: SERVICES -->
+<section id="view-services" class="view">
+  <div class="view-header">
+    <h1>Services, Capabilities &amp; Functions</h1>
+    <p>ECCP service offerings across all planned releases — filter by release or category to explore</p>
+  </div>
+
+  <div class="filter-bar" style="gap:8px;">
+    <span class="filter-label">Release</span>
+    <button class="chip active" data-sr="all" onclick="filterSvcRelease('all',this)">All</button>
+    <button class="chip" data-sr="1" onclick="filterSvcRelease(1,this)">Release 1</button>
+    <button class="chip" data-sr="2" onclick="filterSvcRelease(2,this)">Release 2</button>
+    <button class="chip" data-sr="3" onclick="filterSvcRelease(3,this)">Release 3</button>
+    <button class="chip" data-sr="4" onclick="filterSvcRelease(4,this)">Release 4</button>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Category</span>
+    <button class="chip active" data-sf="all" onclick="filterSvc('all',this)">All</button>
+    <button class="chip" data-sf="support" onclick="filterSvc('support',this)">Support Plans</button>
+    <button class="chip" data-sf="package" onclick="filterSvc('package',this)">Packages</button>
+    <button class="chip" data-sf="value" onclick="filterSvc('value',this)">Value Added</button>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Show</span>
+    <button class="chip active" id="sv-cap" onclick="toggleSvcLevel('cap',this)">Capabilities</button>
+    <button class="chip active" id="sv-func" onclick="toggleSvcLevel('func',this)">Functions</button>
+    <div class="filter-sep"></div>
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b5b5b5" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="svc-search" type="text" placeholder="Search services, capabilities…" oninput="searchSvc(this.value)" id="svc-search-input">
+    </div>
+    <button class="reset-chip ml-auto" onclick="resetSvc()">Reset</button>
+  </div>
+
+  <div class="svc-grid" id="svc-root"></div>
+</section>
+
+<!-- VIEW 3: ROLES -->
+<section id="view-roles" class="view">
+  <div class="view-header">
+    <h1>Roles &amp; Staffing</h1>
+    <p>Proposed roles to support the ECCP program — Phase I and future requirements</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon total">👥</div>
+      <div><div class="stat-num total">9</div><div class="stat-lbl">Total Roles</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon hire">🔴</div>
+      <div><div class="stat-num hire">3</div><div class="stat-lbl">Need to Hire</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon internal">🔵</div>
+      <div><div class="stat-num internal">4</div><div class="stat-lbl">Build Internally</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon optional">🟢</div>
+      <div><div class="stat-num optional">2</div><div class="stat-lbl">Optional / Future</div></div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Hiring Status</span>
+    <button class="chip active" data-rs="all" onclick="filterRoles('status','all',this)">All Roles</button>
+    <button class="chip" data-rs="hire" onclick="filterRoles('status','hire',this)">Need to Hire</button>
+    <button class="chip" data-rs="internal" onclick="filterRoles('status','internal',this)">Build Internally</button>
+    <button class="chip" data-rs="optional" onclick="filterRoles('status','optional',this)">Optional</button>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Priority</span>
+    <button class="chip" data-rp="critical" onclick="filterRoles('priority','critical',this)">Phase I Critical</button>
+    <button class="chip" data-rp="required" onclick="filterRoles('priority','required',this)">Required</button>
+    <button class="chip" data-rp="optional" onclick="filterRoles('priority','optional',this)">Optional</button>
+    <button class="reset-chip ml-auto" onclick="resetRoles()">Reset</button>
+  </div>
+
+  <div class="roles-grid" id="roles-root"></div>
+</section>
+
+<script>
+/* ============================================================
+   DATA
+============================================================ */
+
+const VISION_PHASES = [
+  { id:'v1', name:'Discover & Recommend', blue:false,
+    desc:'Guided exploration with AI-powered recommendations based on agency tech portfolio and popular solutions from other state agencies. Reduces overwhelming research and provides clear starting points.' },
+  { id:'v2', name:'Consulting & Governance', blue:false,
+    desc:'Expert guidance on compliance with state policies. WaTech negotiates with cloud providers for best prices and brokers services. Ensures agencies are compliant and benefit from cost-effective solutions.' },
+  { id:'v3', name:'Simplified Green Light', blue:true,
+    desc:'Streamlined authorization with automated compliance and security checks. Real-time status tracking gives agencies full visibility. Standard services skip consultation entirely — the catalog is the green light.',
+    partial:true },
+  { id:'v4', name:'Seamless Acquisition', blue:false,
+    desc:'Clear timelines and communication channels established. Agencies acquire solutions promptly with minimal manual handoffs.' },
+  { id:'v5', name:'Easy Integration', blue:false,
+    desc:'Plug-and-play deployment with integration playbooks. Automated configuration and compatibility checks reduce complexity and deployment time.' },
+  { id:'v6', name:'Continuous Optimization', blue:false,
+    desc:'Built-in feedback mechanisms. Continuous data analysis informs future recommendations. Agencies benefit from ongoing support and optimization to maximize investment value.' }
+];
+
+let R1_STEPS = [
+  { phase:'v1', name:'Need Identification & Research', actor:'Agency', status:'both',
+    desc:'Agency realizes cloud services need, researches solutions, discovers WaTech agency portal',
+    subs:['Realizes need for cloud services','Researches solutions online','Navigates to WaTech website','Discovers link to agency portal','Navigates to portal login screen'] },
+  { phase:'v1', name:'Sign Up & Account Creation', actor:'Agency', status:'release',
+    desc:'Creates agency account with personal & agency info, invites admins, lands on homepage',
+    subs:['Clicks "Create account"','Enters personal account info','Enters agency account info','Optionally invites additional admins/users','Submits form and lands on portal homepage'] },
+  { phase:'v1', name:'Marketplace Exploration', actor:'Agency', status:'both',
+    desc:'Scans marketplace for cloud services, clicks into a packaged service, reviews details',
+    subs:['Scans marketplace for cloud services','Searches for "Cloud services"','Clicks on "Cloud packaged services"','Reviews service information page','Clicks "Request service"'] },
+  { phase:'v1', name:'Train & Upskill', actor:'Agency', status:'both',
+    desc:'Agency accesses training resources via the portal and is directed to the Pluralsight platform to build cloud skills.',
+    subs:['Agency clicks training link and is taken to Pluralsight platform'] },
+  { phase:'v1', name:'AI Navigator', actor:'Agency / System', status:'vision',
+    desc:'AI-powered decision support tool that guides agencies through service selection, answers questions, and recommends solutions based on agency needs. Not included in Release 1.',
+    subs:['Agency asks AI Navigator a question about cloud options','AI Navigator recommends services based on agency profile','AI Navigator explains trade-offs between options','Escalates to Cloud Navigator / human advisor if needed'] },
+  { phase:'v1', name:'Collaboration Forum', actor:'Agency', status:'vision',
+    desc:'A shared space for agencies to post questions, share insights, and collaborate on cloud adoption challenges. Not included in Release 1.',
+    subs:['Agency posts a question or insight to the forum','Other agencies respond and share experiences','WaTech moderates and contributes best practices','Forum content surfaces in recommendations and search'] },
+  { phase:'v1', name:'Service & Provider Comparison', actor:'Agency', status:'vision',
+    desc:'A portal feature enabling agencies to compare services and cloud providers side by side (e.g., AWS vs. Azure) to support informed decision making. Not included in Release 1.',
+    subs:['Agency selects two or more services or providers to compare','Portal displays side-by-side comparison of features, cost, and SLAs','Comparison highlights WaTech recommendations','Agency uses comparison to inform consultation or direct order'] },
+  { phase:'v2', name:'Consultation Request Submission', actor:'Agency', status:'both',
+    desc:'Views and fills intake form, submits to ServiceNow, sees order status: In Review',
+    subs:['Views intake form','Fills out service intake form','Submits request → sent to ServiceNow','Views order history dashboard (Status: In Review)'] },
+  { phase:'v2', name:'Service Consultation', actor:'WaTech', status:'both',
+    desc:'WaTech logs into ServiceNow, contacts agency IT specialist, consults and prepares proposal',
+    subs:['WaTech logs into ServiceNow','Views consultation request','Contacts Agency IT specialist','Consults and advises on service','Updates status → Proposal & Payment','Sends status update to agency portal'] },
+  { phase:'v3', name:'Self-Service Green Light', actor:'System', status:'partial',
+    desc:'For standard catalog services, agencies order directly without consultation. Status tracking provides real-time visibility — implied in the self-service ordering flow.',
+    subs:['Standard catalog services orderable without consultation','ServiceNow status tracking provides real-time updates','Automated request routing to fulfilment team','No manual design review required for standard packages','Simplified Green Light is the act of ordering from the approved catalog'] },
+  { phase:'v4', name:'Payment', actor:'Both', status:'both',
+    desc:'WaTech prepares & sends proposal, agency reviews, accepts, and pays. Status updates to Onboarding.',
+    subs:['WaTech prepares proposal and emails agency','Agency reviews proposal','Agency accepts proposal','Agency pays for service','Status updates to: Onboarding'] },
+  { phase:'v5', name:'Onboarding, Implementation & Completion', actor:'WaTech', status:'both',
+    desc:'WaTech provisions services, schedules onboarding call, manages deployment through to completion',
+    subs:['WaTech provisions services','Contacts agency to schedule onboarding call','Agency joins onboarding call','Status: Implementation → WaTech manages deployment','Status: Complete → support resources provided to agency'] },
+  { phase:'v6', name:'Feedback', actor:'Agency', status:'both',
+    desc:'Agency submits feedback via portal widget. WaTech views and actions responses.',
+    subs:['Agency logs in to portal','Clicks feedback widget','Fills out feedback form','Submits form','WaTech views and actions feedback'] },
+  { phase:'v6', name:'Support Request', actor:'Agency', status:'both',
+    desc:'Agency navigates to "My Services," selects a service, submits support request, tracks status',
+    subs:['Navigate to "My Services"','Select a specific service from list','Click "Get Support"','Fill out and submit support form','Track status in "Open Support Requests"','WaTech provides support and updates status'] },
+  { phase:'v6', name:'Incident Alert', actor:'Agency', status:'release',
+    desc:'Agency sees incident alert banner on portal homepage, reviews and dismisses.',
+    subs:['Agency logs in and sees incident alert at top of screen','Reviews incident details and impact','Dismisses alert after review'] },
+  { phase:'v6', name:'IT Reporting', actor:'Agency', status:'partial',
+    desc:'Release 1 delivers financial (FinOps) reporting and incident alerts, but standard technology performance monitoring KPIs — part of the IT Performance Dashboard workstream — are not yet included.',
+    partialNote:'✅ Included: FinOps cost reporting, incident alerts\n⬜ Missing: Technology performance KPIs (uptime, latency, SLO health) from the IT Performance Dashboard workstream',
+    subs:['Agency logs in to portal','Views FinOps cloud spend dashboard','Views incident alerts and notifications','Technology performance KPIs not yet available (future: IT Performance Dashboard)','Standard monitoring KPIs (uptime, latency, SLO health) planned for future release'] }
+];
+
+let SERVICES = [
+  { id:'s1', type:'support', icon:'🥉', name:'Bronze — Essential Support',
+    summary:'Lowest cost support plan. Basic networking & security support, basic cost observability. 1-week SLA response.',
+    caps:[
+      { name:'Support Process', status:'Active', fns:['Define Bronze support contact model and identity resources','Define Bronze support scope (networking, security basics)','Set 1-week SLA support time expectation','Define Bronze subscription intake process'] },
+      { name:'Service Level Objectives', status:'Active', fns:['Defined SLOs for Bronze tier services','Measurable availability and performance targets','Incident tracking and reporting against SLOs','Monitoring aligned to SLO metrics'] },
+      { name:'Monthly Cloud Tenant Billing Report', status:'Active', fns:['Cost visibility & basic reporting dashboard','Tenant-level cost allocation','Separation of shared platform costs vs. tenant-specific usage','Basic cost observability for agencies'] }
+    ]},
+  { id:'s2', type:'support', icon:'🥈', name:'Silver — Managed Support',
+    summary:'Medium cost. Includes everything in Bronze plus architecture & security reviews, patch coordination, modernization guidance. 1-2 day SLA.',
+    caps:[
+      { name:'Support Process', status:'Active', fns:['All Bronze support scope included','Architecture & security reviews','Patch and maintenance coordination','Workload modernization guidance','1-2 day SLA support time expectation'] },
+      { name:'Resource Configuration Policies', status:'Active', fns:['Standard baselines for security, networking, identity','Template-driven deployments (Terraform, Bicep)','Enforced policy and guardrails','Segmentation of production and non-production environments'] },
+      { name:'Service Ratings', status:'Active', fns:['Mechanism for customers to rate services','Feedback collection tied to specific services','Reporting and trend analysis on service quality','Governance review of feedback and ratings'] }
+    ]},
+  { id:'s3', type:'support', icon:'🥇', name:'Gold — Strategic Support',
+    summary:'Highest cost. Includes everything in Silver plus dedicated account advisor, cloud strategy & roadmap development, cost optimization recommendations.',
+    caps:[
+      { name:'Cloud Solution Consulting', status:'Active', fns:['Dedicated account advisor assignment','Ongoing cloud operations support','Cloud strategy & roadmap development','Cost optimization recommendations','Working hours SLA response'] },
+      { name:'Support Process', status:'Active', fns:['All Silver support scope included','Define Gold strategic support scope','Dedicated advisor for ongoing guidance','Escalation path for critical issues'] },
+      { name:'Service Level Objectives', status:'Active', fns:['Gold-tier SLO targets (working hours SLA)','Reporting and trend analysis','Executive governance review of feedback'] }
+    ]},
+  { id:'s4', type:'package', icon:'☁️', name:'AWS Foundation',
+    summary:'Complete AWS environment ready day 1. Includes VPC, IAM identity integration, EC2, SQL, S3, security services, finance observability, secrets & key management.',
+    caps:[
+      { name:'Tenant/Customer Provisioning', status:'Active', fns:['Automated creation of AWS tenant/account','Identity integration (AWS IAM)','Billing & cost tracking configuration','Baseline policies applied at provisioning','Full audit logging of provisioning actions'] },
+      { name:'Foundation Service Platform', status:'Active', fns:['Standard baselines for security, networking, identity, monitoring','Template-driven deployments (CloudFormation, Terraform)','Enforced policy and guardrails at all layers','Segmentation of production and non-production environments'] },
+      { name:'Federated Identity & Authentication', status:'Active', fns:['Identity integration with Entra ID and AWS IAM','Role assignment based on job function','Least-privilege access enforcement','Policy-as-code enforcement (SCPs, IAM policies)','Centralized authorization management'] },
+      { name:'Managed Internet Egress', status:'Active', fns:['Centralized internet breakout for outbound traffic','Traffic inspection and security controls (firewall, filtering)','Logging and monitoring of outbound traffic','Egress IP address control and allow listing'] },
+      { name:'Cloud Tenant/Customer Tagging', status:'Active', fns:['Required tagging schema: owner, cost center, agency, environment, compliance','Billing and chargeback tags enforced','Customer tags at account level','Identification of orphaned or untagged resources'] }
+    ]},
+  { id:'s5', type:'package', icon:'☁️', name:'Azure Foundation',
+    summary:'Complete Azure environment ready day 1. Includes Vnet, IAM, VMs, SQL, Storage Account, security services, finance observability, secrets & key management.',
+    caps:[
+      { name:'Tenant/Customer Provisioning', status:'Active', fns:['Automated creation of Azure tenant/subscription','Identity integration (Entra ID)','Billing & cost tracking configuration','Baseline policies applied at provisioning','Full audit logging of provisioning actions'] },
+      { name:'Foundation Service Platform', status:'Active', fns:['Standard baselines for security, networking, identity, monitoring','Template-driven deployments (Bicep, Terraform)','Enforced Azure Policy guardrails','Segmentation of production and non-production environments'] },
+      { name:'Federated Identity & Authentication', status:'Active', fns:['Entra ID federated identity integration','Role assignment based on job function','Least-privilege access enforcement via RBAC','Centralized authorization management'] },
+      { name:'Managed Key Vault', status:'Active', fns:['Secrets management enabled by default','Key management and rotation enabled','Credential rotation schedules','Least-privilege access to vault resources'] },
+      { name:'Managed Internet Egress', status:'Active', fns:['Azure Firewall centralized internet breakout','Traffic inspection and filtering','Logging and monitoring of outbound traffic','Network egress controls and allow listing'] }
+    ]},
+  { id:'s6', type:'value', icon:'🐙', name:'GitHub Organization',
+    summary:'WaTech-managed GitHub organization for state agencies. Provides managed source control, CI/CD foundation, and role-based access.',
+    caps:[
+      { name:'In-house PaaS Service Integration', status:'Active', fns:['Define GitHub Organization fulfillment process','Define intake information requirements','Define fulfillment owner and operator','Agency onboarding to GitHub Org'] },
+      { name:'Resource Authorization Management', status:'Active', fns:['Role-based access control with full audit logging','Least-privilege access enforcement','User provisioning and deprovisioning workflows','Define GitHub Organization access policies'] }
+    ]},
+  { id:'s7', type:'value', icon:'🧱', name:'Databricks Environment',
+    summary:'Managed Databricks analytics environment for data science and ML workloads with secure access to approved data sources.',
+    caps:[
+      { name:'Data Science Landing Zone', status:'Active', fns:['Isolated landing zone for analytics and data science workloads','Secure access to approved datasets and data sources','Identity-based access control and data protection','Cost tracking and usage reporting enabled'] },
+      { name:'Managed Data Lake Access', status:'Active', fns:['Define Databricks fulfillment process','Define intake information requirements','Define fulfillment owner','Support for notebook, compute, and storage services'] }
+    ]},
+  { id:'s8', type:'value', icon:'🤖', name:'AI Playground',
+    summary:'Azure or AWS account pre-configured with approved AI services, security guardrails, restricted to approved models and frameworks.',
+    caps:[
+      { name:'Foundation Service Platform', status:'Active', fns:['Cloud account pattern configured for AI workloads','Networking and security configuration enabled','AI services enabled with guardrails','AI models/frameworks restricted to approved list'] },
+      { name:'Resource Configuration Policies', status:'Active', fns:['Define AI Playground support contributors','Policy enforcement at deployment time','CIS and NIST baseline enforcement','Restrict AI models and frameworks to guardrails'] }
+    ]},
+  { id:'s9', type:'value', icon:'💬', name:'One-time Consulting',
+    summary:'On-demand WaTech SME expertise for Security, Architecture, and Data consulting engagements.',
+    caps:[
+      { name:'Cloud Solution Consulting', status:'Active', fns:['Define consulting SME categories: Security, Architecture, Data','Identify and assign consulting SME resources','Define consulting request intake form','Define consulting fulfillment workflow and SLA'] },
+      { name:'Support Process', status:'Active', fns:['Omni-channel support (ServiceNow, Email)','Terms of service agreement for consulting','Design Review integration option','Governance via CEAC + ARB if required'] }
+    ]},
+  { id:'s10', type:'value', icon:'🔗', name:'Third-party Software Offerings',
+    summary:'Current third-party solutions WaTech can enable for agencies — including Docusign, Salesforce, Mulesoft, OpenAI, Anthropic, and others.',
+    caps:[
+      { name:'3rd Party PaaS Service Integration', status:'Active', fns:['Identify available third-party solution catalog','Define agency onboarding process per solution','CSP contracts formally managed','Major Cloud Service Provider contracts signed and ready'] },
+      { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Brokered service selection process','Catalog to order flow for third-party services','Order status tracking in portal','Pricing design for brokered services'] }
+    ]},
+  /* ── Release 2 ── */
+  { id:'s11', type:'package', icon:'🏭', name:'Cloud Migration Factory — Rehost', release:2,
+    summary:'Repeatable lift-and-shift migration pattern for moving on-premises workloads to cloud with minimal refactoring. Provides a dedicated landing zone, hybrid network connectivity, and IaC-driven automation.',
+    caps:[
+      { name:'Lift and Shift Landing Zone', status:'Proposed', fns:['Standard landing zone designed for migrated workloads','Hybrid network connectivity to on-premises environments','Baseline security, logging, and monitoring controls enabled','Support for legacy operating systems and architectures','Cost tracking and tagging enabled by default'] },
+      { name:'On-Premise Network Connection', status:'Proposed', fns:['Dedicated or VPN-based hybrid connectivity','Network security controls and monitoring','Failover and resiliency support','Centralized routing and segmentation enforcement'] }
+    ]},
+  { id:'s12', type:'value', icon:'🔧', name:'Azure DevOps Toolkit', release:2,
+    summary:'WaTech-managed Azure DevOps environment for state agency development teams. Includes CI/CD pipeline templates, managed repositories, and project governance aligned to WaTech standards.',
+    caps:[
+      { name:'Managed DevOps Toolchain', status:'Proposed', fns:['Azure DevOps organization and project setup','Pipeline templates and starter kits for agencies','Role-based access and project governance','Integration with GitHub and Azure services','Onboarding documentation and quickstart guides'] }
+    ]},
+  { id:'s13', type:'value', icon:'🔐', name:'Security Posture Management', release:2,
+    summary:'Continuous cloud security posture management across AWS and Azure environments. Provides centralized configuration scanning, CIS/NIST compliance reporting, and proactive drift detection.',
+    caps:[
+      { name:'Resource Configuration Scanning', status:'Proposed', fns:['Continuous scanning of cloud resource configurations','CIS and NIST baseline enforcement','Drift detection and policy violation alerting','Compliance reporting and remediation guidance','Policy enforcement at deployment time'] },
+      { name:'Cloud SIEM', status:'Proposed', fns:['Centralized security event and log collection','Multi-cloud correlation support','SOC integration and incident escalation','Firewall, auth, and network change log ingestion','Reporting and visibility dashboards'] }
+    ]},
+  /* ── Release 3 ── */
+  { id:'s14', type:'support', icon:'💎', name:'Platinum — Managed Operations', release:3,
+    summary:'Premium fully-managed operations tier. WaTech manages the full cloud environment including proactive monitoring, incident response, change management, and a dedicated operations team.',
+    caps:[
+      { name:'Support Process', status:'Proposed', fns:['All Gold support scope included','Proactive monitoring and incident response','Dedicated operations team assignment','Change management and runbook maintenance','24/7 coverage option for critical workloads'] },
+      { name:'Service Level Objectives', status:'Proposed', fns:['Platinum-tier SLO targets with working-hours SLA','Executive governance review of SLO performance','Incident tracking and trend analysis','Escalation paths and on-call support model'] }
+    ]},
+  { id:'s15', type:'package', icon:'🔄', name:'Cloud Migration Factory — Modernize', release:3,
+    summary:'Application modernization migration pattern for refactoring or re-platforming legacy workloads to cloud-native architectures. Includes container-ready landing zones and IaC-driven deployment patterns.',
+    caps:[
+      { name:'Cloud-Native Landing Zone', status:'Proposed', fns:['Landing zone optimized for cloud-native architectures','Infrastructure deployed via Infrastructure-as-Code','Native identity integration and zero-trust networking','Policy and guardrail enforcement at all layers','Native logging, monitoring, and observability enabled'] },
+      { name:'Container Platform Landing Zone', status:'Proposed', fns:['Standardized landing zone for container platforms','Managed Kubernetes or container orchestration integration','Isolated networking and identity boundaries for container workloads','Baseline security controls including RBAC and pod security enforcement','Centralized logging and monitoring integration'] }
+    ]},
+  { id:'s16', type:'package', icon:'☁️', name:'AWS Advanced', release:3,
+    summary:'Expanded AWS environment beyond Foundation. Adds advanced networking, sandbox environments, transit connectivity between tenants, and enhanced cost allocation for mature cloud consumers.',
+    caps:[
+      { name:'Virtual Network Service', status:'Proposed', fns:['Advanced VPC configurations with IP address management (IPAM)','Non-overlapping CIDR allocation across tenants','Support for segmentation (subnets, tiers, security zones)','Standardized network patterns deployed via automation','Integration with identity, logging, and monitoring services'] },
+      { name:'Playground / Sandbox Environments', status:'Proposed', fns:['Isolated sandbox accounts for experimentation','Basic spending caps and guardrails enforced','Environment isolation from production','Self-service provisioning for approved sandbox patterns','Automatic lifecycle expiration and cleanup'] }
+    ]},
+  { id:'s17', type:'package', icon:'☁️', name:'Azure Advanced', release:3,
+    summary:'Expanded Azure environment beyond Foundation. Adds advanced virtual networking, managed DNS, sandbox environments, and enhanced cost allocation for mature cloud consumers.',
+    caps:[
+      { name:'Virtual Network Service', status:'Proposed', fns:['Advanced Vnet configurations with IPAM','Non-overlapping CIDR allocation across tenants','Support for subnets, tiers, and security zones','Standardized network patterns deployed via automation','Integration with identity, logging, and monitoring services'] },
+      { name:'Managed DNS Services', status:'Proposed', fns:['Provider-managed authoritative DNS service','Support for public and private DNS zones','Role-based access to DNS records','High availability and resiliency','Integration with provisioning and identity services'] }
+    ]},
+  { id:'s18', type:'value', icon:'🤖', name:'Amazon Q', release:3,
+    summary:'AWS generative AI assistant for development and operations teams. Provides natural language cloud management, code suggestions, and resource insights through a managed, guardrailed deployment.',
+    caps:[
+      { name:'Foundation Service Platform', status:'Proposed', fns:['Amazon Q enabled with WaTech-approved guardrails','Identity-based access and usage controls','Logging and audit of AI assistant usage','Restricted to approved models and interaction patterns','Integration with existing AWS Foundation environments'] }
+    ]},
+  { id:'s19', type:'value', icon:'🤖', name:'Azure CoPilot', release:3,
+    summary:'Microsoft Azure AI Copilot for cloud development and operations. Offers natural language interfaces for Azure management, code assistance, and security insights through a managed enablement.',
+    caps:[
+      { name:'Foundation Service Platform', status:'Proposed', fns:['Azure Copilot enabled with WaTech-approved guardrails','Identity-based access and usage controls','Logging and audit of AI assistant usage','Restricted to approved interaction patterns','Integration with existing Azure Foundation environments'] }
+    ]},
+  /* ── Release 4 ── */
+  { id:'s20', type:'package', icon:'🧠', name:'Operationalized AI Platform', release:4,
+    summary:'Production-ready AI/ML platform for state agencies. Provides managed model hosting, MLOps pipelines, governance controls, and approved data access for operationalizing AI workloads at scale.',
+    caps:[
+      { name:'Data Science Landing Zone', status:'Proposed', fns:['Production AI/ML environment with security and governance','Managed model deployment and versioning','Approved data source access with identity-based controls','Cost tracking and usage reporting for AI workloads','Isolated landing zone for analytics and AI workloads'] },
+      { name:'Resource Configuration Policies', status:'Proposed', fns:['AI model and framework approval governance','Policy enforcement for AI workload deployments','CIS and NIST baseline enforcement for AI environments','Restrict AI models to approved and vetted list','Audit logging of AI model access and inference'] }
+    ]},
+  { id:'s21', type:'package', icon:'⎈', name:'Managed Kubernetes Platform', release:4,
+    summary:'WaTech-managed Kubernetes platform for containerized agency workloads. Includes shared cluster infrastructure, multi-tenant isolation, automated upgrades, and agency namespace provisioning.',
+    caps:[
+      { name:'Container Platform Landing Zone', status:'Proposed', fns:['Shared Kubernetes cluster with multi-tenant isolation','Managed cluster upgrades, patching, and monitoring','Agency namespace provisioning with RBAC','Network policy enforcement between namespaces','Integration with CI/CD pipelines and image registries'] },
+      { name:'Containers Cluster as a Service', status:'Proposed', fns:['On-demand container cluster provisioning for agencies','Monitoring, alerting, logging, and performance visibility','Cost allocation and usage reporting per namespace','Shared or dedicated compute node options','Support for stateful and stateless workloads'] }
+    ]},
+  { id:'s22', type:'value', icon:'📦', name:'Container Accelerator', release:4,
+    summary:'Tooling and patterns to accelerate agency application containerization. Includes a shared container registry with WaTech-approved base images, vulnerability scanning, and deployment starter kits.',
+    caps:[
+      { name:'Shared Container Registry', status:'Proposed', fns:['Centralized container image registry for all agencies','WaTech-approved and patched base image library','Automated image scanning and vulnerability management','Role-based access and full audit logging','Retention policies and image lifecycle management'] },
+      { name:'In-house PaaS Service Integration', status:'Proposed', fns:['Define Container Accelerator fulfillment process','Define intake information requirements','Define fulfillment owner and operator','Agency onboarding to shared registry and starter kits'] }
+    ]}
+];
+
+let ROLES = [
+  { id:'r1', title:'Sr. ServiceNow Platform Engineer / Designer', dept:'Platform / Engineering', hireType:'hire', priority:'critical', icon:'⚙️',
+    resp:'Leads design and configuration of ServiceNow workflows, forms, routing rules, notifications, and status tracking for ECCP. Translates business requirements into scalable platform designs aligned with ServiceNow standards and enterprise architecture.',
+    skills:['ServiceNow Platform','Workflow Design','Enterprise Architecture','ITSM','Platform Governance'], timeline:'Phase I' },
+  { id:'r2', title:'ServiceNow App Developer', dept:'Platform / Engineering', hireType:'hire', priority:'critical', icon:'💻',
+    resp:'Builds and configures ServiceNow applications, forms, and workflow functionality to support ECCP processes. Designs the customer portal experience within ServiceNow.',
+    skills:['ServiceNow Dev','Portal Design','JavaScript','REST APIs','ECCP Processes'], timeline:'Phase I' },
+  { id:'r3', title:'Platform Engineering', dept:'Engineering', hireType:'hire', priority:'critical', icon:'🏗️',
+    resp:'Develops and deploys technical components of the ECCP platform. Builds and maintains infrastructure automation, IaC templates, and platform integrations across Azure and AWS.',
+    skills:['Cloud Infrastructure','Terraform / Bicep','IaC Automation','CI/CD Pipelines','Azure & AWS'], timeline:'Phase I' },
+  { id:'r4', title:'WaTech System Administrator', dept:'Operations', hireType:'internal', priority:'required', icon:'🛡️',
+    resp:'Internal owner of the ECCP platform. Administers users, roles, permissions, configurations, and service offerings. Coordinates platform maintenance, upgrades, issue resolution, and vendor support.',
+    skills:['Platform Administration','ServiceNow Admin','Security Compliance','Vendor Management','User Lifecycle'], timeline:'Phase I' },
+  { id:'r5', title:'Product Manager for ECCP', dept:'Program Management', hireType:'internal', priority:'required', icon:'📊',
+    resp:'Owns ECCP product vision and roadmap. Manages stakeholders, prioritizes features, and bridges business needs with technical delivery across portal, marketplace, and service operations.',
+    skills:['Product Management','Cloud Services','Stakeholder Management','Roadmap Planning','Agile / SAFe'], timeline:'Phase I' },
+  { id:'r6', title:'Governance & Approval Lead', dept:'Governance', hireType:'internal', priority:'required', icon:'⚖️',
+    resp:'Manages governance and approval process for agency requests, service selections, and exceptions. Applies criteria for standard approvals, required reviews, and exception pathways. Maintains decision records and governance reporting.',
+    skills:['Cloud Governance','Policy Management','Cross-functional Coordination','Decision Frameworks','CEAC / ARB'], timeline:'Phase I' },
+  { id:'r7', title:'Cloud Navigator / Solution Advisor', dept:'Customer Success', hireType:'internal', priority:'required', icon:'🧭',
+    resp:'Customer-facing cloud advisory role. Guides agencies through service selection, consultation, and onboarding. Handles exception pathways for non-standard requests and escalations.',
+    skills:['Cloud Advisory','Customer Success','Agency Engagement','Cloud Architecture','ServiceNow'], timeline:'Phase I' },
+  { id:'r8', title:'Service Delivery & Support Lead', dept:'Operations', hireType:'optional', priority:'optional', icon:'🎯',
+    resp:'Designs and manages Bronze, Silver, and Gold support offerings. Defines service levels, support coverage, escalation paths, SME assignments, handoffs, and operational performance measures.',
+    skills:['ITSM','Service Management','SLA Management','Escalation Design','Operations Leadership'], timeline:'As services mature' },
+  { id:'r9', title:'Vendor & SaaS Enablement Lead', dept:'Partnerships', hireType:'optional', priority:'optional', icon:'🤝',
+    resp:'Owns fulfillment and onboarding for GitHub, Databricks, and other third-party SaaS services. Manages vendor relationships, contracts, and agency onboarding processes.',
+    skills:['SaaS Management','Vendor Relations','Contract Management','Onboarding Design','Third-party Integration'], timeline:'As services scale' }
+];
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+function showView(id, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+/* ============================================================
+   VIEW 1: JOURNEY MAP
+============================================================ */
+let jMode = 'comparison', jDesc = false, jSubs = false;
+
+const STATUS_BORDER = { both:'var(--status-both)', partial:'var(--status-partial)', vision:'var(--status-vision)', release:'#a3b429' };
+const STATUS_BG     = { both:'var(--surface)', partial:'#f0f7ff', vision:'#fff5f5', release:'#fafce8' };
+const STATUS_LABEL  = { both:'✓ Aligned', partial:'~ Partial', vision:'○ Vision only', release:'+ R1 only' };
+const STATUS_SUB_BG = { both:'var(--primary)', partial:'var(--secondary)', vision:'var(--error)', release:'#7a8a1e' };
+
+function renderJM() {
+  const root = document.getElementById('jm-root');
+  document.getElementById('jm-legend').style.display = jMode === 'comparison' ? 'flex' : 'none';
+
+  const ph = (p, i) => `
+    <div style="background:${p.blue?'var(--secondary)':'var(--primary)'};color:white;border-radius:var(--radius-sm);padding:11px 14px;width:100%;box-sizing:border-box;">
+      <div class="jm-ph-num" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.6;margin-bottom:3px;">Phase ${i+1}</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
+        <div class="jm-ph-name" style="font-size:13px;font-weight:800;line-height:1.3;">${p.name}</div>
+        ${p.partial?'<div class="jm-ph-implied" style="font-size:10px;background:rgba(255,255,255,.2);border-radius:4px;padding:2px 7px;font-weight:700;white-space:nowrap;flex-shrink:0;margin-top:1px;">⚡ Implied — self-service path</div>':''}
+      </div>
+      ${jDesc?`<div class="jm-ph-desc" style="font-size:11px;opacity:.82;line-height:1.5;margin-top:6px;">${p.desc}</div>`:''}
+    </div>`;
+
+  if (jMode === 'vision') {
+    root.innerHTML = `<div style="display:flex;gap:8px;min-width:900px;">
+      ${VISION_PHASES.map((p,i) => `<div style="flex:1;min-width:150px;">${ph(p,i)}</div>`).join('')}
+    </div>`;
+    return;
+  }
+
+  // Shared sub-phase block builder (used by both release & comparison)
+  const subphaseBlock = (step, showPhaseLabel) => {
+    const stepW = 118; // px per step card
+    const stepGap = 4;
+    const minW = jSubs ? step.subs.length * (stepW + stepGap) - stepGap : 170;
+    const subBg = showPhaseLabel ? STATUS_SUB_BG[step.status] : 'var(--gray-900)';
+    const borderCol = STATUS_BORDER[step.status];
+    const cardBg = STATUS_BG[step.status];
+
+    const stepCards = step.subs.map((sub, j) => `
+      <div style="width:${stepW}px;flex-shrink:0;background:${cardBg};border-radius:5px;padding:7px 9px;border-left:2px solid ${borderCol};box-shadow:var(--shadow-sm);">
+        <div class="jm-step-num" style="font-size:9px;font-weight:700;color:var(--gray-300);margin-bottom:2px;">${j+1}</div>
+        <div class="jm-step-sub" style="font-size:11px;color:var(--gray-700);line-height:1.4;">${sub}</div>
+      </div>`).join('');
+
+    const statusBadge = showPhaseLabel
+      ? `<span class="jm-status-lbl" style="font-size:10px;background:rgba(255,255,255,.22);border-radius:3px;padding:1px 6px;font-weight:700;">${STATUS_LABEL[step.status]}</span>`
+      : '';
+
+    return `
+      <div style="display:flex;flex-direction:column;gap:4px;width:${minW}px;flex-shrink:0;">
+        <div style="background:${subBg};color:white;border-radius:var(--radius-sm);padding:9px 11px;">
+          <div class="jm-sub-name" style="font-size:12px;font-weight:700;line-height:1.3;margin-bottom:4px;">${step.name}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:wrap;">
+            <span class="jm-sub-actor" style="font-size:10px;opacity:.7;">👤 ${step.actor}</span>
+            ${statusBadge}
+          </div>
+          ${!jSubs?`<div class="jm-sub-desc" style="font-size:11px;opacity:.72;line-height:1.4;margin-top:5px;">${step.desc}</div>`:''}
+        </div>
+        ${step.partialNote ? `<div style="background:rgba(0,0,0,0.18);border-radius:4px;padding:7px 10px;margin-top:4px;">${step.partialNote.split('\n').map(line=>`<div class="jm-note-line" style="font-size:11px;color:white;line-height:1.6;">${line}</div>`).join('')}</div>` : ''}
+        ${jSubs?`<div style="display:flex;gap:${stepGap}px;">${stepCards}</div>`:''}
+      </div>`;
+  };
+
+  if (jMode === 'release') {
+    const blocks = R1_STEPS.map(s => subphaseBlock(s, false)).join('');
+    root.innerHTML = `<div style="display:flex;gap:8px;min-width:max-content;">${blocks}</div>`;
+    return;
+  }
+
+  // COMPARISON MODE — phase groups with sub-phases + steps flowing horizontally
+  const phaseGroups = VISION_PHASES.map((phase, pi) => {
+    const phaseSteps = R1_STEPS.filter(s => s.phase === phase.id);
+    const subBlocks = phaseSteps.map(s => subphaseBlock(s, true)).join('');
+    const gapPx = 4;
+    // Phase header width = sum of subphase widths + gaps between them
+    // We use width:100% on the header relative to the flex group — handled by display:flex + flex-direction:column
+    return `
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+        ${ph(phase, pi)}
+        <div style="display:flex;gap:${gapPx}px;">${subBlocks}</div>
+      </div>`;
+  }).join('');
+
+  root.innerHTML = `<div style="display:flex;gap:8px;min-width:max-content;">${phaseGroups}</div>`;
+}
+
+function setMode(m, el) {
+  jMode = m;
+  document.querySelectorAll('[id^="jbtn-"]').forEach(b => {
+    if (['jbtn-comparison','jbtn-vision','jbtn-release'].includes(b.id))
+      b.classList.toggle('active', b === el);
+  });
+  renderJM();
+}
+
+function toggleDesc(el) {
+  jDesc = !jDesc;
+  el.classList.toggle('active', jDesc);
+  el.textContent = jDesc ? 'Hide Phase Detail' : 'Show Phase Detail';
+  renderJM();
+}
+
+function toggleSubs(el) {
+  jSubs = !jSubs;
+  el.classList.toggle('active', jSubs);
+  el.textContent = jSubs ? 'Hide Step Detail' : 'Show Step Detail';
+  renderJM();
+}
+
+function resetJourney() {
+  jMode = 'comparison'; jDesc = false; jSubs = false;
+  document.getElementById('jbtn-comparison').classList.add('active');
+  document.getElementById('jbtn-vision').classList.remove('active');
+  document.getElementById('jbtn-release').classList.remove('active');
+  const d = document.getElementById('jbtn-desc'); d.classList.remove('active'); d.textContent = 'Show Phase Detail';
+  const s = document.getElementById('jbtn-sub'); s.classList.remove('active'); s.textContent = 'Show Step Detail';
+  renderJM();
+}
+
+/* ============================================================
+   VIEW 2: SERVICES
+============================================================ */
+let svcFilter = 'all', svcRelease = 'all', svcShowCap = true, svcShowFunc = true, svcSearch = '';
+
+const RELEASE_LABEL = { 1:'Release 1', 2:'Release 2', 3:'Release 3', 4:'Release 4' };
+const RELEASE_COLOR = { 1:'var(--primary)', 2:'#2563eb', 3:'#7c3aed', 4:'#0e7490' };
+
+function renderSvc() {
+  const root = document.getElementById('svc-root');
+  const q = svcSearch.toLowerCase();
+  const filtered = SERVICES.filter(s => {
+    if (svcFilter !== 'all' && s.type !== svcFilter) return false;
+    if (svcRelease !== 'all' && (s.release || 1) !== svcRelease) return false;
+    if (q) {
+      const inName = s.name.toLowerCase().includes(q);
+      const inSum = s.summary.toLowerCase().includes(q);
+      const inCap = s.caps.some(c => c.name.toLowerCase().includes(q) || c.fns.some(f => f.toLowerCase().includes(q)));
+      if (!inName && !inSum && !inCap) return false;
+    }
+    return true;
+  });
+
+  const typeLabel = { support:'Support Plan', package:'Package', value:'Value Added Service' };
+
+  if (!filtered.length) {
+    root.innerHTML = '<div class="empty-state">No services match your search.</div>';
+    return;
+  }
+
+  root.innerHTML = filtered.map(s => {
+    const rel = s.release || 1;
+    const relColor = RELEASE_COLOR[rel];
+    return `
+    <div class="svc-node" data-svc="${s.id}">
+      <div class="svc-hdr t-${s.type}" onclick="toggleSvcNode('${s.id}')">
+        <div class="svc-icon">${s.icon}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+            <div class="svc-type-tag">${typeLabel[s.type]}</div>
+            <div style="font-size:10px;font-weight:700;background:${relColor};color:white;border-radius:3px;padding:1px 6px;opacity:.9;">${RELEASE_LABEL[rel]}</div>
+          </div>
+          <div class="svc-title">${s.name}</div>
+        </div>
+        <div class="svc-chevron ${svcShowCap?'open':''}" id="svc-chev-${s.id}">▼</div>
+      </div>
+      <div class="svc-body ${svcShowCap?'open':''}" id="svc-body-${s.id}">
+        <div class="svc-summary">${s.summary}</div>
+        ${s.caps.map(c => {
+          const capId = 'cap-' + s.id + '-' + c.name.replace(/[^a-z0-9]/gi,'_');
+          return `<div class="cap-node">
+            <div class="cap-hdr" onclick="toggleCap('${capId}')">
+              <div class="cap-dot">◈</div>
+              <div class="cap-name">${c.name}</div>
+              <span class="cap-status-badge ${c.status==='Active'?'cs-active':'cs-proposed'}">${c.status}</span>
+              <span class="cap-chev ${svcShowFunc?'open':''}" id="${capId}-chev">▾</span>
+            </div>
+            <div class="func-list ${svcShowFunc?'open':''}" id="${capId}">
+              ${c.fns.map(f => `<div class="func-item"><div class="func-dot"></div><div>${f}</div></div>`).join('')}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSvcNode(id) {
+  const body = document.getElementById('svc-body-' + id);
+  const chev = document.getElementById('svc-chev-' + id);
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+function toggleCap(id) {
+  const list = document.getElementById(id);
+  const chev = document.getElementById(id + '-chev');
+  if (list) { const open = list.classList.toggle('open'); if (chev) chev.classList.toggle('open', open); }
+}
+
+function filterSvc(type, el) {
+  svcFilter = type;
+  document.querySelectorAll('[data-sf]').forEach(b => b.classList.toggle('active', b.dataset.sf === type));
+  renderSvc();
+}
+
+function filterSvcRelease(rel, el) {
+  svcRelease = rel;
+  document.querySelectorAll('[data-sr]').forEach(b => b.classList.toggle('active', b.dataset.sr === String(rel)));
+  renderSvc();
+}
+
+function toggleSvcLevel(level, el) {
+  if (level === 'cap') svcShowCap = !svcShowCap;
+  if (level === 'func') svcShowFunc = !svcShowFunc;
+  el.classList.toggle('active', level === 'cap' ? svcShowCap : svcShowFunc);
+  renderSvc();
+}
+
+function searchSvc(q) { svcSearch = q; renderSvc(); }
+
+function resetSvc() {
+  svcFilter = 'all'; svcRelease = 'all'; svcShowCap = true; svcShowFunc = true; svcSearch = '';
+  document.getElementById('svc-search-input').value = '';
+  document.querySelectorAll('[data-sf]').forEach(b => b.classList.toggle('active', b.dataset.sf === 'all'));
+  document.querySelectorAll('[data-sr]').forEach(b => b.classList.toggle('active', b.dataset.sr === 'all'));
+  document.getElementById('sv-cap').classList.add('active');
+  document.getElementById('sv-func').classList.add('active');
+  renderSvc();
+}
+
+/* ============================================================
+   VIEW 3: ROLES
+============================================================ */
+let roleStatus = 'all', rolePriority = 'all';
+
+function renderRoles() {
+  const root = document.getElementById('roles-root');
+  const filtered = ROLES.filter(r => {
+    if (roleStatus !== 'all' && r.hireType !== roleStatus) return false;
+    if (rolePriority !== 'all' && r.priority !== rolePriority) return false;
+    return true;
+  });
+
+  const hireLabel = { hire:'External Hire / Upskill', internal:'Build Internally', optional:'Optional / Future' };
+  const priorLabel = { critical:'🔴 Phase I Critical', required:'🟡 Required', optional:'🟢 Optional' };
+  const priorClass = { critical:'pb-critical', required:'pb-required', optional:'pb-optional' };
+  const hireClass  = { hire:'hb-hire', internal:'hb-internal', optional:'hb-optional' };
+
+  if (!filtered.length) {
+    root.innerHTML = '<div class="empty-state">No roles match the current filters.</div>';
+    return;
+  }
+
+  root.innerHTML = filtered.map(r => `
+    <div class="role-card">
+      <div class="role-hdr">
+        <div class="role-avatar ${r.hireType}">${r.icon}</div>
+        <div>
+          <div class="role-title-text">${r.title}</div>
+          <div class="role-dept">📍 ${r.dept}</div>
+        </div>
+      </div>
+      <div class="role-body">
+        <div class="role-sec">Responsibilities</div>
+        <div class="role-text">${r.resp}</div>
+        <div class="role-sec">Required Skills</div>
+        <div class="skill-tags">${r.skills.map(sk => `<span class="skill-tag">${sk}</span>`).join('')}</div>
+        <div class="role-sec">Timeline</div>
+        <div class="role-text">⏱ ${r.timeline}</div>
+      </div>
+      <div class="role-ftr">
+        <span class="priority-badge ${priorClass[r.priority]}">${priorLabel[r.priority]}</span>
+        <span class="hire-badge ${hireClass[r.hireType]}">${hireLabel[r.hireType]}</span>
+      </div>
+    </div>`).join('');
+}
+
+function filterRoles(dim, val, el) {
+  if (dim === 'status') {
+    roleStatus = val; rolePriority = 'all';
+    document.querySelectorAll('[data-rs]').forEach(b => b.classList.toggle('active', b.dataset.rs === val));
+    document.querySelectorAll('[data-rp]').forEach(b => b.classList.remove('active'));
+  } else {
+    rolePriority = val; roleStatus = 'all';
+    document.querySelectorAll('[data-rp]').forEach(b => b.classList.toggle('active', b.dataset.rp === val));
+    document.querySelectorAll('[data-rs]').forEach(b => b.classList.toggle('active', b.dataset.rs === 'all'));
+  }
+  renderRoles();
+}
+
+function resetRoles() {
+  roleStatus = 'all'; rolePriority = 'all';
+  document.querySelectorAll('[data-rs]').forEach(b => b.classList.toggle('active', b.dataset.rs === 'all'));
+  document.querySelectorAll('[data-rp]').forEach(b => b.classList.remove('active'));
+  renderRoles();
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+
+const STORAGE_KEY = 'eccp-dashboard-data';
+
+function setFontSize(size, el) {
+  document.body.setAttribute('data-font', size);
+  document.querySelectorAll('[data-fsz]').forEach(b => b.classList.toggle('active', b.dataset.fsz === size));
+  try { localStorage.setItem('eccp-font-size', size); } catch(e) {}
+}
+
+function loadSavedData() {
+  try {
+    const savedFont = localStorage.getItem('eccp-font-size');
+    if (savedFont) {
+      document.body.setAttribute('data-font', savedFont);
+      document.querySelectorAll('[data-fsz]').forEach(b => b.classList.toggle('active', b.dataset.fsz === savedFont));
+    }
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    const d = JSON.parse(saved);
+    if (d.steps)    R1_STEPS = d.steps;
+    if (d.services) SERVICES = d.services;
+    if (d.roles)    ROLES    = d.roles;
+  } catch(e) {
+    console.warn('ECCP: could not load saved data', e);
+  }
+}
+
+function exportData() {
+  const payload = { steps: R1_STEPS, services: SERVICES, roles: ROLES };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'eccp-dashboard-data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Data exported as eccp-dashboard-data.json');
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (!d.steps && !d.services && !d.roles) throw new Error('Unrecognised format');
+      if (d.steps)    R1_STEPS = d.steps;
+      if (d.services) SERVICES = d.services;
+      if (d.roles)    ROLES    = d.roles;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+      renderJM();
+      renderSvc();
+      renderRoles();
+      showToast('Data imported and saved ✓');
+    } catch(err) {
+      showToast('Import failed: ' + err.message);
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('import-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+loadSavedData();
+renderJM();
+renderSvc();
+renderRoles();
+</script>
+</body>
+</html>
