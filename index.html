@@ -322,15 +322,14 @@ body[data-font="xlarge"] .jm-note-line  { font-size: 15px !important; }
 <!-- VIEW 1: JOURNEY MAP -->
 <section id="view-journey" class="view active">
   <div class="view-header">
-    <h1>Journey Map Comparison</h1>
+    <h1>Journey Map</h1>
     <p>Future State Vision blueprint vs. Release 1 planned build — hover steps to see substeps</p>
   </div>
 
   <div class="filter-bar">
-    <span class="filter-label">Mode</span>
-    <button class="chip active" id="jbtn-comparison" onclick="setMode('comparison',this)">Comparison</button>
-    <button class="chip" id="jbtn-vision" onclick="setMode('vision',this)">Future Vision Only</button>
-    <button class="chip" id="jbtn-release" onclick="setMode('release',this)">Release 1 Only</button>
+    <span class="filter-label">Actualizing the Vision</span>
+    <button class="chip active" id="jbtn-vision" onclick="toggleVision(this)">Future Vision</button>
+    <button class="chip active" id="jbtn-release" onclick="toggleRelease(this)">Foundational Release Plan</button>
     <div class="filter-sep"></div>
     <button class="chip" id="jbtn-desc" onclick="toggleDesc(this)">Show Phase Detail</button>
     <button class="chip" id="jbtn-sub" onclick="toggleSubs(this)">Show Step Detail</button>
@@ -688,7 +687,7 @@ function showView(id, el) {
 /* ============================================================
    VIEW 1: JOURNEY MAP
 ============================================================ */
-let jMode = 'comparison', jDesc = false, jSubs = false;
+let jVision = true, jRelease = true, jDesc = false, jSubs = false;
 
 const STATUS_BORDER = { both:'var(--status-both)', partial:'var(--status-partial)', vision:'var(--status-vision)', release:'#a3b429' };
 const STATUS_BG     = { both:'var(--surface)', partial:'#f0f7ff', vision:'#fff5f5', release:'#fafce8' };
@@ -697,7 +696,7 @@ const STATUS_SUB_BG = { both:'var(--primary)', partial:'var(--secondary)', visio
 
 function renderJM() {
   const root = document.getElementById('jm-root');
-  document.getElementById('jm-legend').style.display = jMode === 'comparison' ? 'flex' : 'none';
+  document.getElementById('jm-legend').style.display = (jVision && jRelease) ? 'flex' : 'none';
 
   const ph = (p, i) => `
     <div style="background:${p.blue?'var(--secondary)':'var(--primary)'};color:white;border-radius:var(--radius-sm);padding:11px 14px;width:100%;box-sizing:border-box;">
@@ -709,7 +708,12 @@ function renderJM() {
       ${jDesc?`<div class="jm-ph-desc" style="font-size:11px;opacity:.82;line-height:1.5;margin-top:6px;">${p.desc}</div>`:''}
     </div>`;
 
-  if (jMode === 'vision') {
+  if (!jVision && !jRelease) {
+    root.innerHTML = '<p style="color:var(--gray-300);padding:24px 0;">Select at least one view above.</p>';
+    return;
+  }
+
+  if (jVision && !jRelease) {
     root.innerHTML = `<div style="display:flex;gap:8px;min-width:900px;">
       ${VISION_PHASES.map((p,i) => `<div style="flex:1;min-width:150px;">${ph(p,i)}</div>`).join('')}
     </div>`;
@@ -750,13 +754,13 @@ function renderJM() {
       </div>`;
   };
 
-  if (jMode === 'release') {
+  if (!jVision && jRelease) {
     const blocks = R1_STEPS.map(s => subphaseBlock(s, false)).join('');
     root.innerHTML = `<div style="display:flex;gap:8px;min-width:max-content;">${blocks}</div>`;
     return;
   }
 
-  // COMPARISON MODE — phase groups with sub-phases + steps flowing horizontally
+  // Both on — comparison: phase groups with sub-phases + steps flowing horizontally
   const phaseGroups = VISION_PHASES.map((phase, pi) => {
     const phaseSteps = R1_STEPS.filter(s => s.phase === phase.id);
     const subBlocks = phaseSteps.map(s => subphaseBlock(s, true)).join('');
@@ -773,12 +777,15 @@ function renderJM() {
   root.innerHTML = `<div style="display:flex;gap:8px;min-width:max-content;">${phaseGroups}</div>`;
 }
 
-function setMode(m, el) {
-  jMode = m;
-  document.querySelectorAll('[id^="jbtn-"]').forEach(b => {
-    if (['jbtn-comparison','jbtn-vision','jbtn-release'].includes(b.id))
-      b.classList.toggle('active', b === el);
-  });
+function toggleVision(el) {
+  jVision = !jVision;
+  el.classList.toggle('active', jVision);
+  renderJM();
+}
+
+function toggleRelease(el) {
+  jRelease = !jRelease;
+  el.classList.toggle('active', jRelease);
   renderJM();
 }
 
@@ -797,10 +804,9 @@ function toggleSubs(el) {
 }
 
 function resetJourney() {
-  jMode = 'comparison'; jDesc = false; jSubs = false;
-  document.getElementById('jbtn-comparison').classList.add('active');
-  document.getElementById('jbtn-vision').classList.remove('active');
-  document.getElementById('jbtn-release').classList.remove('active');
+  jVision = true; jRelease = true; jDesc = false; jSubs = false;
+  document.getElementById('jbtn-vision').classList.add('active');
+  document.getElementById('jbtn-release').classList.add('active');
   const d = document.getElementById('jbtn-desc'); d.classList.remove('active'); d.textContent = 'Show Phase Detail';
   const s = document.getElementById('jbtn-sub'); s.classList.remove('active'); s.textContent = 'Show Step Detail';
   renderJM();
