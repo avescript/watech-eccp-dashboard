@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ECCP Program Dashboard | WaTech</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 <style>
 /* ================================ DESIGN TOKENS ================================ */
 :root {
@@ -139,6 +140,7 @@ body { font-family: var(--font); background: linear-gradient(145deg, #d8dff0 0%,
 .svc-hdr.t-package { background: var(--teal); }
 .svc-hdr.t-value   { background: var(--secondary); }
 .svc-icon { width: 38px; height: 38px; background: rgba(255,255,255,0.15); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.svc-icon .material-icons-outlined, .role-avatar .material-icons-outlined, .stat-icon .material-icons-outlined { font-size: inherit; }
 .svc-type-tag { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: rgba(255,255,255,.65); margin-bottom: 2px; }
 .svc-title { font-size: 14px; font-weight: 800; color: white; }
 .svc-chevron { color: rgba(255,255,255,.6); font-size: 13px; transition: transform .2s; margin-left: auto; flex-shrink: 0; }
@@ -393,19 +395,19 @@ body[data-font="xlarge"] .jm-note-line  { font-size: 15px !important; }
 
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon total">👥</div>
+      <div class="stat-icon total"><span class="material-icons-outlined">group</span></div>
       <div><div class="stat-num total">11</div><div class="stat-lbl">Total Roles</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon hire">🔴</div>
+      <div class="stat-icon hire"><span class="material-icons-outlined">person_add</span></div>
       <div><div class="stat-num hire">3</div><div class="stat-lbl">Need to Hire or Upskill Internally</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon internal">🔵</div>
+      <div class="stat-icon internal"><span class="material-icons-outlined">school</span></div>
       <div><div class="stat-num internal">5</div><div class="stat-lbl">Upskill Internally</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon optional">🟢</div>
+      <div class="stat-icon optional"><span class="material-icons-outlined">star_outline</span></div>
       <div><div class="stat-num optional">3</div><div class="stat-lbl">Optional / Future</div></div>
     </div>
   </div>
@@ -501,7 +503,7 @@ let R1_STEPS = [
 ];
 
 let SERVICES = [
-  { id:'s1', type:'support', icon:'🥉', name:'Bronze — Essential Support',
+  { id:'s1', type:'support', icon:'workspace_premium', name:'Bronze — Essential Support',
     summary:'Lowest cost support plan. Basic networking & security support, basic cost observability. 1-week SLA response.',
     caps:[
       { name:'Support Process', status:'Active', fns:['Define Bronze support contact model and identity resources','Define Bronze support scope (networking, security basics)','Set 1-week SLA support time expectation','Define Bronze subscription intake process'] },
@@ -509,7 +511,7 @@ let SERVICES = [
       { name:'Monthly Cloud Tenant Billing Report', status:'Active', fns:['Cost visibility & basic reporting dashboard','Tenant-level cost allocation','Separation of shared platform costs vs. tenant-specific usage','Basic cost observability for agencies'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select Bronze support plan in WaTech Marketplace','Submit subscription intake form with agency details','WaTech team reviews and activates support tier','Confirmation and onboarding resources sent to agency','Subscription status tracked in agency portal'] }
     ]},
-  { id:'s2', type:'support', icon:'🥈', name:'Silver — Managed Support',
+  { id:'s2', type:'support', icon:'workspace_premium', name:'Silver — Managed Support',
     summary:'Medium cost. Includes everything in Bronze plus architecture & security reviews, patch coordination, modernization guidance. 1-2 day SLA.',
     caps:[
       { name:'Support Process', status:'Active', fns:['All Bronze support scope included','Architecture & security reviews','Patch and maintenance coordination','Workload modernization guidance','1-2 day SLA support time expectation'] },
@@ -517,7 +519,7 @@ let SERVICES = [
       { name:'Service Ratings', status:'Active', fns:['Mechanism for customers to rate services','Feedback collection tied to specific services','Reporting and trend analysis on service quality','Governance review of feedback and ratings'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select Silver support plan in WaTech Marketplace','Submit subscription intake form with agency and workload details','WaTech team reviews and activates support tier','Architecture intake scheduled post-enrollment','Subscription status tracked in agency portal'] }
     ]},
-  { id:'s3', type:'support', icon:'🥇', name:'Gold — Strategic Support',
+  { id:'s3', type:'support', icon:'workspace_premium', name:'Gold — Strategic Support',
     summary:'Highest cost. Includes everything in Silver plus dedicated account advisor, cloud strategy & roadmap development, cost optimization recommendations.',
     caps:[
       { name:'Cloud Solution Consulting', status:'Active', fns:['Dedicated account advisor assignment','Ongoing cloud operations support','Cloud strategy & roadmap development','Cost optimization recommendations','Working hours SLA response'] },
@@ -525,7 +527,7 @@ let SERVICES = [
       { name:'Service Level Objectives', status:'Active', fns:['Gold-tier SLO targets (working hours SLA)','Reporting and trend analysis','Executive governance review of feedback'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select Gold support plan in WaTech Marketplace','Submit subscription intake form','WaTech assigns dedicated account advisor','Onboarding meeting scheduled to align on roadmap and SLAs','Subscription status tracked in agency portal'] }
     ]},
-  { id:'s4', type:'package', icon:'☁️', name:'AWS Foundation',
+  { id:'s4', type:'package', icon:'cloud', name:'AWS Foundation',
     summary:'Complete AWS environment ready day 1. Includes VPC, IAM identity integration, EC2, SQL, S3, security services, finance observability, secrets & key management.',
     caps:[
       { name:'Tenant/Customer Provisioning', status:'Active', fns:['Automated creation of AWS tenant/account','Identity integration (AWS IAM)','Billing & cost tracking configuration','Baseline policies applied at provisioning','Full audit logging of provisioning actions'] },
@@ -536,7 +538,7 @@ let SERVICES = [
       { name:'Support Process', status:'Active', fns:['Submit AWS environment support request via ServiceNow portal','Request routed to WaTech cloud engineering team','Incident tracking and status updates in portal','Escalation path for environment-critical issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select AWS Foundation package in WaTech Marketplace','Submit provisioning intake form with agency and workload details','WaTech team reviews and initiates environment build','Automated provisioning pipeline deploys baseline environment','Provisioning status tracked in agency portal'] }
     ]},
-  { id:'s5', type:'package', icon:'☁️', name:'Azure Foundation',
+  { id:'s5', type:'package', icon:'cloud', name:'Azure Foundation',
     summary:'Complete Azure environment ready day 1. Includes Vnet, IAM, VMs, SQL, Storage Account, security services, finance observability, secrets & key management.',
     caps:[
       { name:'Tenant/Customer Provisioning', status:'Active', fns:['Automated creation of Azure tenant/subscription','Identity integration (Entra ID)','Billing & cost tracking configuration','Baseline policies applied at provisioning','Full audit logging of provisioning actions'] },
@@ -547,7 +549,7 @@ let SERVICES = [
       { name:'Support Process', status:'Active', fns:['Submit Azure environment support request via ServiceNow portal','Request routed to WaTech cloud engineering team','Incident tracking and status updates in portal','Escalation path for environment-critical issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select Azure Foundation package in WaTech Marketplace','Submit provisioning intake form with agency and workload details','WaTech team reviews and initiates environment build','Automated provisioning pipeline deploys baseline environment','Provisioning status tracked in agency portal'] }
     ]},
-  { id:'s6', type:'value', icon:'🐙', name:'GitHub Organization',
+  { id:'s6', type:'value', icon:'hub', name:'GitHub Organization',
     summary:'WaTech-managed GitHub organization for state agencies. Provides managed source control, CI/CD foundation, and role-based access.',
     caps:[
       { name:'In-house PaaS Service Integration', status:'Active', fns:['Define GitHub Organization fulfillment process','Define intake information requirements','Define fulfillment owner and operator','Agency onboarding to GitHub Org'] },
@@ -555,7 +557,7 @@ let SERVICES = [
       { name:'Support Process', status:'Active', fns:['Submit GitHub Org support request via ServiceNow portal','Access and permission issues triaged by WaTech team','Incident tracking and status updates in portal','Escalation path for org-level configuration issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select GitHub Organization service in WaTech Marketplace','Submit intake form with team and repository requirements','WaTech provisions org, teams, and access structure','Agency admins onboarded with role assignments','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s7', type:'value', icon:'🧱', name:'Databricks Environment',
+  { id:'s7', type:'value', icon:'dataset', name:'Databricks Environment',
     summary:'Managed Databricks analytics environment for data science and ML workloads with secure access to approved data sources.',
     caps:[
       { name:'Data Science Landing Zone', status:'Active', fns:['Isolated landing zone for analytics and data science workloads','Secure access to approved datasets and data sources','Identity-based access control and data protection','Cost tracking and usage reporting enabled'] },
@@ -563,7 +565,7 @@ let SERVICES = [
       { name:'Support Process', status:'Active', fns:['Submit Databricks environment support request via ServiceNow portal','Issues triaged by WaTech data engineering team','Incident tracking and status updates in portal','Escalation path for environment-critical data issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select Databricks Environment service in WaTech Marketplace','Submit intake form with data workload and access requirements','WaTech provisions isolated Databricks workspace','Data source access configured per agency requirements','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s8', type:'value', icon:'🤖', name:'AI Playground',
+  { id:'s8', type:'value', icon:'smart_toy', name:'AI Playground',
     summary:'Azure or AWS account pre-configured with approved AI services, security guardrails, restricted to approved models and frameworks.',
     caps:[
       { name:'Foundation Service Platform', status:'Active', fns:['Cloud account pattern configured for AI workloads','Networking and security configuration enabled','AI services enabled with guardrails','AI models/frameworks restricted to approved list'] },
@@ -571,14 +573,14 @@ let SERVICES = [
       { name:'Support Process', status:'Active', fns:['Submit AI Playground support request via ServiceNow portal','Issues triaged by WaTech AI/cloud engineering team','Guardrail or access issues escalated to WaTech platform team','Incident tracking and status updates in portal','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select AI Playground service in WaTech Marketplace','Submit intake form with AI use case and model requirements','WaTech reviews use case against approved guardrails','Environment provisioned with approved AI services enabled','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s9', type:'value', icon:'💬', name:'One-time Consulting',
+  { id:'s9', type:'value', icon:'chat', name:'One-time Consulting',
     summary:'On-demand WaTech SME expertise for Security, Architecture, and Data consulting engagements.',
     caps:[
       { name:'Cloud Solution Consulting', status:'Active', fns:['Define consulting SME categories: Security, Architecture, Data','Identify and assign consulting SME resources','Define consulting request intake form','Define consulting fulfillment workflow and SLA'] },
       { name:'Support Process', status:'Active', fns:['Omni-channel support (ServiceNow, Email)','Terms of service agreement for consulting','Design Review integration option','Governance via CEAC + ARB if required'] },
       { name:'Marketplace — Order Fulfillment', status:'Active', fns:['Select consulting engagement type in WaTech Marketplace','Submit intake form describing consulting need and timeline','WaTech assigns appropriate SME (Security, Architecture, or Data)','Engagement kickoff scheduled and scope confirmed','Engagement status tracked in agency portal'] }
     ]},
-  { id:'s10', type:'value', icon:'🔗', name:'Third-party Software Offerings',
+  { id:'s10', type:'value', icon:'link', name:'Third-party Software Offerings',
     summary:'Current third-party solutions WaTech can enable for agencies — including Docusign, Salesforce, Mulesoft, OpenAI, Anthropic, and others.',
     caps:[
       { name:'3rd Party PaaS Service Integration', status:'Active', fns:['Identify available third-party solution catalog','Define agency onboarding process per solution','CSP contracts formally managed','Major Cloud Service Provider contracts signed and ready'] },
@@ -586,7 +588,7 @@ let SERVICES = [
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Brokered service selection process','Catalog to order flow for third-party services','Order status tracking in portal','Pricing design for brokered services'] }
     ]},
   /* ── Release 2 ── */
-  { id:'s11', type:'package', icon:'🏭', name:'Cloud Migration Factory — Rehost', release:2,
+  { id:'s11', type:'package', icon:'factory', name:'Cloud Migration Factory — Rehost', release:2,
     summary:'Repeatable lift-and-shift migration pattern for moving on-premises workloads to cloud with minimal refactoring. Provides a dedicated landing zone, hybrid network connectivity, and IaC-driven automation.',
     caps:[
       { name:'Lift and Shift Landing Zone', status:'Proposed', fns:['Standard landing zone designed for migrated workloads','Hybrid network connectivity to on-premises environments','Baseline security, logging, and monitoring controls enabled','Support for legacy operating systems and architectures','Cost tracking and tagging enabled by default'] },
@@ -594,14 +596,14 @@ let SERVICES = [
       { name:'Support Process', status:'Proposed', fns:['Submit migration support request via ServiceNow portal','Issues triaged by WaTech migration engineering team','Incident tracking and status updates in portal','Escalation path for migration-blocking issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Cloud Migration Factory (Rehost) in WaTech Marketplace','Submit intake form with workload inventory and migration requirements','WaTech conducts migration readiness assessment','Migration plan developed and execution scheduled','Fulfillment milestones tracked in agency portal'] }
     ]},
-  { id:'s12', type:'value', icon:'🔧', name:'Azure DevOps Toolkit', release:2,
+  { id:'s12', type:'value', icon:'developer_board', name:'Azure DevOps Toolkit', release:2,
     summary:'WaTech-managed Azure DevOps environment for state agency development teams. Includes CI/CD pipeline templates, managed repositories, and project governance aligned to WaTech standards.',
     caps:[
       { name:'Managed DevOps Toolchain', status:'Proposed', fns:['Azure DevOps organization and project setup','Pipeline templates and starter kits for agencies','Role-based access and project governance','Integration with GitHub and Azure services','Onboarding documentation and quickstart guides'] },
       { name:'Support Process', status:'Proposed', fns:['Submit Azure DevOps support request via ServiceNow portal','Issues triaged by WaTech DevOps engineering team','Incident tracking and status updates in portal','Escalation path for pipeline and repository issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Azure DevOps Toolkit in WaTech Marketplace','Submit intake form with project and team requirements','WaTech provisions Azure DevOps organization and project structure','Agency teams onboarded with role assignments and starter kits','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s13', type:'value', icon:'🔐', name:'Security Posture Management', release:2,
+  { id:'s13', type:'value', icon:'lock', name:'Security Posture Management', release:2,
     summary:'Continuous cloud security posture management across AWS and Azure environments. Provides centralized configuration scanning, CIS/NIST compliance reporting, and proactive drift detection.',
     caps:[
       { name:'Resource Configuration Scanning', status:'Proposed', fns:['Continuous scanning of cloud resource configurations','CIS and NIST baseline enforcement','Drift detection and policy violation alerting','Compliance reporting and remediation guidance','Policy enforcement at deployment time'] },
@@ -610,14 +612,14 @@ let SERVICES = [
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Security Posture Management in WaTech Marketplace','Submit intake form with environment and compliance scope','WaTech enables scanning and SIEM integration for agency environments','Compliance dashboards and alerting configured','Fulfillment status tracked in agency portal'] }
     ]},
   /* ── Release 3 ── */
-  { id:'s14', type:'support', icon:'💎', name:'Platinum — Managed Operations', release:3,
+  { id:'s14', type:'support', icon:'diamond', name:'Platinum — Managed Operations', release:3,
     summary:'Premium fully-managed operations tier. WaTech manages the full cloud environment including proactive monitoring, incident response, change management, and a dedicated operations team.',
     caps:[
       { name:'Support Process', status:'Proposed', fns:['All Gold support scope included','Proactive monitoring and incident response','Dedicated operations team assignment','Change management and runbook maintenance','24/7 coverage option for critical workloads'] },
       { name:'Service Level Objectives', status:'Proposed', fns:['Platinum-tier SLO targets with working-hours SLA','Executive governance review of SLO performance','Incident tracking and trend analysis','Escalation paths and on-call support model'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Platinum — Managed Operations in WaTech Marketplace','Submit subscription intake form','WaTech assigns dedicated operations team','Onboarding and operations handoff meeting scheduled','Ongoing operational status and reporting available in agency portal'] }
     ]},
-  { id:'s15', type:'package', icon:'🔄', name:'Cloud Migration Factory — Modernize', release:3,
+  { id:'s15', type:'package', icon:'autorenew', name:'Cloud Migration Factory — Modernize', release:3,
     summary:'Application modernization migration pattern for refactoring or re-platforming legacy workloads to cloud-native architectures. Includes container-ready landing zones and IaC-driven deployment patterns.',
     caps:[
       { name:'Cloud-Native Landing Zone', status:'Proposed', fns:['Landing zone optimized for cloud-native architectures','Infrastructure deployed via Infrastructure-as-Code','Native identity integration and zero-trust networking','Policy and guardrail enforcement at all layers','Native logging, monitoring, and observability enabled'] },
@@ -625,7 +627,7 @@ let SERVICES = [
       { name:'Support Process', status:'Proposed', fns:['Submit modernization support request via ServiceNow portal','Issues triaged by WaTech cloud-native engineering team','Incident tracking and status updates in portal','Escalation path for containerization and refactor issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Cloud Migration Factory (Modernize) in WaTech Marketplace','Submit intake form with application inventory and modernization goals','WaTech conducts application modernization assessment','Refactoring or re-platforming plan developed and execution scheduled','Fulfillment milestones tracked in agency portal'] }
     ]},
-  { id:'s16', type:'package', icon:'☁️', name:'AWS Advanced', release:3,
+  { id:'s16', type:'package', icon:'cloud', name:'AWS Advanced', release:3,
     summary:'Expanded AWS environment beyond Foundation. Adds advanced networking, sandbox environments, transit connectivity between tenants, and enhanced cost allocation for mature cloud consumers.',
     caps:[
       { name:'Virtual Network Service', status:'Proposed', fns:['Advanced VPC configurations with IP address management (IPAM)','Non-overlapping CIDR allocation across tenants','Support for segmentation (subnets, tiers, security zones)','Standardized network patterns deployed via automation','Integration with identity, logging, and monitoring services'] },
@@ -633,7 +635,7 @@ let SERVICES = [
       { name:'Support Process', status:'Proposed', fns:['Submit AWS Advanced support request via ServiceNow portal','Issues triaged by WaTech cloud networking team','Incident tracking and status updates in portal','Escalation path for advanced networking and sandbox issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select AWS Advanced package in WaTech Marketplace','Submit intake form with advanced networking and environment requirements','WaTech reviews eligibility (requires existing AWS Foundation)','Advanced configuration deployed via automation','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s17', type:'package', icon:'☁️', name:'Azure Advanced', release:3,
+  { id:'s17', type:'package', icon:'cloud', name:'Azure Advanced', release:3,
     summary:'Expanded Azure environment beyond Foundation. Adds advanced virtual networking, managed DNS, sandbox environments, and enhanced cost allocation for mature cloud consumers.',
     caps:[
       { name:'Virtual Network Service', status:'Proposed', fns:['Advanced Vnet configurations with IPAM','Non-overlapping CIDR allocation across tenants','Support for subnets, tiers, and security zones','Standardized network patterns deployed via automation','Integration with identity, logging, and monitoring services'] },
@@ -641,14 +643,14 @@ let SERVICES = [
       { name:'Support Process', status:'Proposed', fns:['Submit Azure Advanced support request via ServiceNow portal','Issues triaged by WaTech cloud networking team','Incident tracking and status updates in portal','Escalation path for advanced networking and DNS issues','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Azure Advanced package in WaTech Marketplace','Submit intake form with advanced networking and DNS requirements','WaTech reviews eligibility (requires existing Azure Foundation)','Advanced configuration deployed via automation','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s18', type:'value', icon:'🤖', name:'Amazon Q', release:3,
+  { id:'s18', type:'value', icon:'smart_toy', name:'Amazon Q', release:3,
     summary:'AWS generative AI assistant for development and operations teams. Provides natural language cloud management, code suggestions, and resource insights through a managed, guardrailed deployment.',
     caps:[
       { name:'Foundation Service Platform', status:'Proposed', fns:['Amazon Q enabled with WaTech-approved guardrails','Identity-based access and usage controls','Logging and audit of AI assistant usage','Restricted to approved models and interaction patterns','Integration with existing AWS Foundation environments'] },
       { name:'Support Process', status:'Proposed', fns:['Submit Amazon Q support request via ServiceNow portal','Issues triaged by WaTech AI/cloud engineering team','Guardrail or access issues escalated to WaTech platform team','Incident tracking and status updates in portal','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Amazon Q service in WaTech Marketplace','Submit intake form with AI use case and team requirements','WaTech reviews use case against approved guardrails','Amazon Q enabled within existing AWS Foundation environment','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s19', type:'value', icon:'🤖', name:'Azure CoPilot', release:3,
+  { id:'s19', type:'value', icon:'smart_toy', name:'Azure CoPilot', release:3,
     summary:'Microsoft Azure AI Copilot for cloud development and operations. Offers natural language interfaces for Azure management, code assistance, and security insights through a managed enablement.',
     caps:[
       { name:'Foundation Service Platform', status:'Proposed', fns:['Azure Copilot enabled with WaTech-approved guardrails','Identity-based access and usage controls','Logging and audit of AI assistant usage','Restricted to approved interaction patterns','Integration with existing Azure Foundation environments'] },
@@ -656,7 +658,7 @@ let SERVICES = [
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Azure Copilot service in WaTech Marketplace','Submit intake form with AI use case and team requirements','WaTech reviews use case against approved guardrails','Azure Copilot enabled within existing Azure Foundation environment','Fulfillment status tracked in agency portal'] }
     ]},
   /* ── Release 4 ── */
-  { id:'s20', type:'package', icon:'🧠', name:'Operationalized AI Platform', release:4,
+  { id:'s20', type:'package', icon:'psychology', name:'Operationalized AI Platform', release:4,
     summary:'Production-ready AI/ML platform for state agencies. Provides managed model hosting, MLOps pipelines, governance controls, and approved data access for operationalizing AI workloads at scale.',
     caps:[
       { name:'Data Science Landing Zone', status:'Proposed', fns:['Production AI/ML environment with security and governance','Managed model deployment and versioning','Approved data source access with identity-based controls','Cost tracking and usage reporting for AI workloads','Isolated landing zone for analytics and AI workloads'] },
@@ -664,7 +666,7 @@ let SERVICES = [
       { name:'Support Process', status:'Proposed', fns:['Submit AI platform support request via ServiceNow portal','Issues triaged by WaTech AI/MLOps engineering team','Model deployment and governance issues tracked in portal','Escalation path for production AI workload incidents','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Operationalized AI Platform in WaTech Marketplace','Submit intake form with AI workload and governance requirements','WaTech provisions production AI/ML environment','Model hosting and MLOps pipeline configuration completed','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s21', type:'package', icon:'⎈', name:'Managed Kubernetes Platform', release:4,
+  { id:'s21', type:'package', icon:'widgets', name:'Managed Kubernetes Platform', release:4,
     summary:'WaTech-managed Kubernetes platform for containerized agency workloads. Includes shared cluster infrastructure, multi-tenant isolation, automated upgrades, and agency namespace provisioning.',
     caps:[
       { name:'Container Platform Landing Zone', status:'Proposed', fns:['Shared Kubernetes cluster with multi-tenant isolation','Managed cluster upgrades, patching, and monitoring','Agency namespace provisioning with RBAC','Network policy enforcement between namespaces','Integration with CI/CD pipelines and image registries'] },
@@ -672,7 +674,7 @@ let SERVICES = [
       { name:'Support Process', status:'Proposed', fns:['Submit Kubernetes platform support request via ServiceNow portal','Issues triaged by WaTech container engineering team','Namespace and workload issues tracked in portal','Escalation path for cluster-level incidents','SLA response aligned to agency support tier'] },
       { name:'Marketplace — Order Fulfillment', status:'Proposed', fns:['Select Managed Kubernetes Platform in WaTech Marketplace','Submit intake form with containerized workload and namespace requirements','WaTech provisions agency namespace with RBAC and network policies','CI/CD and image registry integration configured','Fulfillment status tracked in agency portal'] }
     ]},
-  { id:'s22', type:'value', icon:'📦', name:'Container Accelerator', release:4,
+  { id:'s22', type:'value', icon:'inventory_2', name:'Container Accelerator', release:4,
     summary:'Tooling and patterns to accelerate agency application containerization. Includes a shared container registry with WaTech-approved base images, vulnerability scanning, and deployment starter kits.',
     caps:[
       { name:'Shared Container Registry', status:'Proposed', fns:['Centralized container image registry for all agencies','WaTech-approved and patched base image library','Automated image scanning and vulnerability management','Role-based access and full audit logging','Retention policies and image lifecycle management'] },
@@ -683,37 +685,37 @@ let SERVICES = [
 ];
 
 let ROLES = [
-  { id:'r1', title:'Sr. ServiceNow Platform Engineer / Designer', dept:'Platform / Engineering', hireType:'hire', priority:'critical', icon:'⚙️',
+  { id:'r1', title:'Sr. ServiceNow Platform Engineer / Designer', dept:'Platform / Engineering', hireType:'hire', priority:'critical', icon:'settings',
     resp:'Leads design and configuration of ServiceNow workflows, forms, routing rules, notifications, and status tracking for ECCP. Translates business requirements into scalable platform designs aligned with ServiceNow standards and enterprise architecture.',
     skills:['ServiceNow Platform','Workflow Design','Portal Design','Enterprise Architecture','ITSM','Platform Governance'], timeline:'Phase I' },
-  { id:'r2', title:'ServiceNow App Developer', dept:'Platform / Engineering', hireType:'hire', priority:'critical', icon:'💻',
+  { id:'r2', title:'ServiceNow App Developer', dept:'Platform / Engineering', hireType:'hire', priority:'critical', icon:'laptop_mac',
     resp:'Builds and configures ServiceNow applications, forms, and workflow functionality to support ECCP processes. Designs the customer portal experience within ServiceNow.',
     skills:['ServiceNow Dev','Portal Architect & Build','JavaScript','REST APIs','ECCP Processes'], timeline:'Phase I' },
-  { id:'r3', title:'Platform Engineering', dept:'Engineering', hireType:'hire', priority:'critical', icon:'🏗️',
+  { id:'r3', title:'Platform Engineering', dept:'Engineering', hireType:'hire', priority:'critical', icon:'construction',
     resp:'Develops and deploys technical components of the ECCP platform. Builds and maintains infrastructure automation, IaC templates, and platform integrations across Azure and AWS.',
     skills:['Cloud Infrastructure','Terraform / Bicep','IaC Automation','CI/CD Pipelines','Azure & AWS'], timeline:'Phase I' },
-  { id:'r4', title:'WaTech System Administrator', dept:'Operations', hireType:'internal', priority:'required', icon:'🛡️',
+  { id:'r4', title:'WaTech System Administrator', dept:'Operations', hireType:'internal', priority:'required', icon:'shield',
     resp:'Internal owner of the ECCP platform. Administers users, roles, permissions, configurations, and service offerings. Coordinates platform maintenance, upgrades, issue resolution, and vendor support.',
     skills:['Platform Administration','ServiceNow Admin','Security Compliance','Vendor Management','User Lifecycle'], timeline:'Phase I' },
-  { id:'r5', title:'Product Manager for ECCP', dept:'Program Management', hireType:'internal', priority:'required', icon:'📊',
+  { id:'r5', title:'Product Manager for ECCP', dept:'Program Management', hireType:'internal', priority:'required', icon:'bar_chart',
     resp:'Owns ECCP product vision and roadmap. Manages stakeholders, prioritizes features, and bridges business needs with technical delivery across portal, marketplace, and service operations.',
     skills:['Product Management','Cloud Services','Stakeholder Management','Roadmap Planning','Agile / SAFe'], timeline:'Phase I' },
-  { id:'r6', title:'Governance & Approval Lead', dept:'Governance', hireType:'internal', priority:'required', icon:'⚖️',
+  { id:'r6', title:'Governance & Approval Lead', dept:'Governance', hireType:'internal', priority:'required', icon:'gavel',
     resp:'Manages governance and approval process for agency requests, service selections, and exceptions. Applies criteria for standard approvals, required reviews, and exception pathways. Maintains decision records and governance reporting.',
     skills:['Cloud Governance','Policy Management','Cross-functional Coordination','Decision Frameworks','CEAC / ARB'], timeline:'Phase I' },
-  { id:'r7', title:'Cloud Navigator / Solution Advisor', dept:'Customer Success', hireType:'internal', priority:'required', icon:'🧭',
+  { id:'r7', title:'Cloud Navigator / Solution Advisor', dept:'Customer Success', hireType:'internal', priority:'required', icon:'explore',
     resp:'Customer-facing cloud advisory role. Guides agencies through service selection, consultation, and onboarding. Handles exception pathways for non-standard requests and escalations.',
     skills:['Cloud Advisory','Customer Success','Agency Engagement','Cloud Architecture','ServiceNow'], timeline:'Phase I' },
-  { id:'r10', title:'Operations Lead', dept:'Operations', hireType:'internal', priority:'required', icon:'🔧',
+  { id:'r10', title:'Operations Lead', dept:'Operations', hireType:'internal', priority:'required', icon:'build_circle',
     resp:'Manages day-to-day support, billing, invoice, escalations, issue resolution, and operational readiness.',
     skills:['Operations Management','Billing & Invoicing','Escalation Management','Issue Resolution','Operational Readiness'], timeline:'Phase II' },
-  { id:'r8', title:'Service Delivery & Support Lead', dept:'Operations', hireType:'optional', priority:'optional', icon:'🎯',
+  { id:'r8', title:'Service Delivery & Support Lead', dept:'Operations', hireType:'optional', priority:'optional', icon:'track_changes',
     resp:'Designs and manages Bronze, Silver, and Gold support offerings. Defines service levels, support coverage, escalation paths, SME assignments, handoffs, and operational performance measures.',
     skills:['ITSM','Service Management','SLA Management','Escalation Design','Operations Leadership'], timeline:'As services mature' },
-  { id:'r9', title:'Vendor & SaaS Enablement Lead', dept:'Partnerships', hireType:'optional', priority:'optional', icon:'🤝',
+  { id:'r9', title:'Vendor & SaaS Enablement Lead', dept:'Partnerships', hireType:'optional', priority:'optional', icon:'handshake',
     resp:'Owns fulfillment and onboarding for GitHub, Databricks, and other third-party SaaS services. Manages vendor relationships, contracts, and agency onboarding processes.',
     skills:['SaaS Management','Vendor Relations','Contract Management','Onboarding Design','Third-party Integration'], timeline:'As services scale' },
-  { id:'r11', title:'AI Platform & Governance SME', dept:'Platform / Engineering', hireType:'optional', priority:'optional', icon:'🤖',
+  { id:'r11', title:'AI Platform & Governance SME', dept:'Platform / Engineering', hireType:'optional', priority:'optional', icon:'smart_toy',
     resp:'Defines the approved AI services, models, data restrictions, security controls, and responsible-use guardrails for the AI Playground. Supports the design and validation of the sandbox before it is offered to agencies.',
     skills:['AI Governance','Model Risk Management','Cloud Security','Responsible AI','Platform Design'], timeline:'As services scale' }
 ];
@@ -892,7 +894,7 @@ function renderSvc() {
     return `
     <div class="svc-node" data-svc="${s.id}">
       <div class="svc-hdr t-${s.type}" onclick="toggleSvcNode('${s.id}')">
-        <div class="svc-icon">${s.icon}</div>
+        <div class="svc-icon"><span class="material-icons-outlined">${s.icon}</span></div>
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
             <div class="svc-type-tag">${typeLabel[s.type]}</div>
@@ -993,7 +995,7 @@ function renderRoles() {
   root.innerHTML = filtered.map(r => `
     <div class="role-card">
       <div class="role-hdr">
-        <div class="role-avatar ${r.hireType}">${r.icon}</div>
+        <div class="role-avatar ${r.hireType}"><span class="material-icons-outlined">${r.icon}</span></div>
         <div>
           <div class="role-title-text">${r.title}</div>
           <div class="role-dept">📍 ${r.dept}</div>
