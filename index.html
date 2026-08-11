@@ -417,8 +417,8 @@ body[data-font="xlarge"] .jm-note-line  { font-size: 15px !important; }
     <button class="chip" data-rs="optional" onclick="filterRoles('status','optional',this)">Optional</button>
     <div class="filter-sep"></div>
     <span class="filter-label">Priority</span>
-    <button class="chip" data-rp="critical" onclick="filterRoles('priority','critical',this)">Phase I Critical</button>
-    <button class="chip" data-rp="required" onclick="filterRoles('priority','required',this)">Required</button>
+    <button class="chip" data-rp="critical" onclick="filterRoles('priority','critical',this)">Phase I Required</button>
+    <button class="chip" data-rp="required" onclick="filterRoles('priority','required',this)">Phase II Required</button>
     <button class="chip" data-rp="optional" onclick="filterRoles('priority','optional',this)">Optional</button>
     <button class="reset-chip ml-auto" onclick="resetRoles()">Reset</button>
   </div>
@@ -974,7 +974,7 @@ function renderRoles() {
   });
 
   const hireLabel = { hire:'External Hire / Upskill', internal:'Upskill Internally', optional:'Optional / Future' };
-  const priorLabel = { critical:'🔴 Phase I Critical', required:'🟡 Required', optional:'🟢 Optional' };
+  const priorLabel = { critical:'🔴 Phase I Required', required:'🟡 Phase II Required', optional:'🟢 Optional' };
   const priorClass = { critical:'pb-critical', required:'pb-required', optional:'pb-optional' };
   const hireClass  = { hire:'hb-hire', internal:'hb-internal', optional:'hb-optional' };
 
