@@ -1041,13 +1041,36 @@ function importData(input) {
       renderJM();
       renderSvc();
       renderRoles();
-      showToast('Data imported and saved ✓');
+      saveUpdatedFile();
     } catch(err) {
       showToast('Import failed: ' + err.message);
     }
     input.value = '';
   };
   reader.readAsText(file);
+}
+
+function saveUpdatedFile() {
+  const build = html => {
+    html = html.replace(/let R1_STEPS = \[[\s\S]*?\n\];/,
+      `let R1_STEPS = ${JSON.stringify(R1_STEPS, null, 2)};`);
+    html = html.replace(/let SERVICES = \[[\s\S]*?\n\];/,
+      `let SERVICES = ${JSON.stringify(SERVICES, null, 2)};`);
+    html = html.replace(/let ROLES = \[[\s\S]*?\n\];/,
+      `let ROLES = ${JSON.stringify(ROLES, null, 2)};`);
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'index.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Data imported — replace index.html with the downloaded file ✓');
+  };
+  fetch(location.href)
+    .then(r => r.text())
+    .then(build)
+    .catch(() => build('<!DOCTYPE html>\n' + document.documentElement.outerHTML));
 }
 
 function showToast(msg) {
