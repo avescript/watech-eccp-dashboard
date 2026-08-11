@@ -401,7 +401,7 @@ body[data-font="xlarge"] .jm-note-line  { font-size: 15px !important; }
     </div>
     <div class="stat-card">
       <div class="stat-icon internal">🔵</div>
-      <div><div class="stat-num internal">4</div><div class="stat-lbl">Build Internally</div></div>
+      <div><div class="stat-num internal">4</div><div class="stat-lbl">Upskill Internally</div></div>
     </div>
     <div class="stat-card">
       <div class="stat-icon optional">🟢</div>
@@ -412,8 +412,8 @@ body[data-font="xlarge"] .jm-note-line  { font-size: 15px !important; }
   <div class="filter-bar">
     <span class="filter-label">Hiring Status</span>
     <button class="chip active" data-rs="all" onclick="filterRoles('status','all',this)">All Roles</button>
-    <button class="chip" data-rs="hire" onclick="filterRoles('status','hire',this)">Need to Hire/Upskill</button>
-    <button class="chip" data-rs="internal" onclick="filterRoles('status','internal',this)">Build Internally</button>
+    <button class="chip" data-rs="hire" onclick="filterRoles('status','hire',this)">Need to Hire or Upskill</button>
+    <button class="chip" data-rs="internal" onclick="filterRoles('status','internal',this)">Upskill Internally</button>
     <button class="chip" data-rs="optional" onclick="filterRoles('status','optional',this)">Optional</button>
     <div class="filter-sep"></div>
     <span class="filter-label">Priority</span>
@@ -973,7 +973,7 @@ function renderRoles() {
     return true;
   });
 
-  const hireLabel = { hire:'External Hire / Upskill', internal:'Build Internally', optional:'Optional / Future' };
+  const hireLabel = { hire:'External Hire / Upskill', internal:'Upskill Internally', optional:'Optional / Future' };
   const priorLabel = { critical:'🔴 Phase I Critical', required:'🟡 Required', optional:'🟢 Optional' };
   const priorClass = { critical:'pb-critical', required:'pb-required', optional:'pb-optional' };
   const hireClass  = { hire:'hb-hire', internal:'hb-internal', optional:'hb-optional' };
